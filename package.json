@@ -1,0 +1,36 @@
+{
+  "name": "react-flip",
+  "version": "0.1.0",
+  "description": "Flip your animations easily by using react components",
+  "main": "index.js",
+  "repository": "https://github.com/JulienPradet/react-flip",
+  "author": "Julien Pradet",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "15.x"
+  },
+  "devDependencies": {
+    "react": "^15.4.2",
+    "babel-core": "^6.24.0",
+    "babel-eslint": "^7.1.1",
+    "babel-loader": "^6.4.1",
+    "babel-preset-react-app": "^2.2.0",
+    "enzyme": "^2.7.1",
+    "eslint": "^3.18.0",
+    "eslint-config-react-app": "^0.6.2",
+    "eslint-loader": "^1.6.3",
+    "eslint-plugin-flowtype": "^2.30.3",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.10.0",
+    "html-webpack-plugin": "^2.28.0",
+    "jest": "^19.0.2",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.2"
+  },
+  "scripts": {
+    "build": "NODE_ENV=production webpack",
+    "start": "NODE_ENV=development webpack-dev-server",
+    "test": "jest"
+  }
+}
