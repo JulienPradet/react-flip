@@ -1,3 +1,6 @@
 exclude_paths:
 - "demo"
 - "**.test.js"
+engines:
+  duplication:
+    enabled: false
