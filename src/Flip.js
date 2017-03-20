@@ -36,7 +36,10 @@ class Flip {
   }
 
   invert() {
-    if (!this._first || !this._last) return;
+    if (!this._first || !this._last) {
+      return;
+    }
+
     this._invert = {
       translateX: 0,
       translateY: 0,
@@ -72,11 +75,13 @@ class Flip {
     this.element.style.zIndex = Math.max(this._first.zIndex, this._last.zIndex);
     this.element.style.transformOrigin = '0 0';
     this.element.style.willChange = 'transform, opacity';
-    return Promise.resolve(true);
+    return true;
   }
 
   play(startTime) {
-    if (!this._invert) return;
+    if (!this._invert) {
+      return;
+    }
 
     this._start = window.performance.now() +
       this.options.delay * this.options.durationMultiplier;
