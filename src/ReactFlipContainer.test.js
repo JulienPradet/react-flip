@@ -155,10 +155,13 @@ describe('ReactFlipContainer', () => {
     externalResolve();
 
     return new Promise(resolve => {
-      process.nextTick(() => {
-        expect(toJson(tree)).toMatchSnapshot();
-        resolve();
-      });
+      setTimeout(
+        () => {
+          expect(toJson(tree)).toMatchSnapshot();
+          resolve();
+        },
+        0
+      );
     });
   });
 

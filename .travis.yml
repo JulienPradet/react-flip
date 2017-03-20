@@ -1,0 +1,24 @@
+language: node_js
+
+node_js:
+  - '6'
+  - '4'
+
+cache:
+  yarn: true
+  directories:
+    - node_modules
+
+install: npm install
+
+script: npm run test
+
+after_success:
+  - yarn coverage
+  - npm install -g codeclimate-test-reporter
+  - codeclimate-test-reporter < coverage/lcov.info
+
+addons:
+  code_climate:
+    repo_token:
+      secure: gjF9Vp2/AwE4z4XX9qRsI39vdJA6RKWV3qnxZ5Qlfc96MTNFPuODwMS1QKPa9bm3aPhO1JScoUfx829hy6bZBLvZWf/dp2n1gbz2gTESioYniicNhITQsVKn7VAAorWWKkqtMpHgefF7UG10t0XcnL671Xpwh/ag4sYeXwzJQFsi4xzRsv7bp6+NSS8Xa9nd3ADyX5IcR78FeDlpQ29xDgZVwQUaUY7mk2hvAsQtDJKLRUbh92ly5qmf5Gyco0uOIdHj872sU8WZCvvjt0TPwxt01rH09i5MnbPxXH4RVfu1oR+aZW0sDAvRb82dfw+WCELA6QRWZiuhuw31IzBnSaib73/EEk9L/lLd2Mq91qWNJR8Y05QZPfFH6wsS7bjPOXTOyd/t5uOAw1wCoBGdkbdHQLGoyyaMnGyU9ggFE8oGAPiowFA8vGSP/WzX1xdUTfsnnrmYu2fAaY56arjm6ocSkYhyYgmcIsgM35SSI6yA92XtXwf/SefUSrzsuDGhwo69+CVc8kwmqw6DgE0XEa9BzgNrA1+qOF2n4+Th7n9koREUYkSNELgUSu8YdU9bkvZDqZr/QzypknNFk2C5OV6+CNse6OS0JTbR0cz+d9ttSOSbzB6Awssf78/UxXPXyRXwkieS28d/FkftjF7I2XsYfv2zzQw/0eppYe1knH8=
