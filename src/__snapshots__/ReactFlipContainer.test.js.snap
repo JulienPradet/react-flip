@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReactFlipContainer Should render as animating if play returned a promise 1`] = `
+<Wrapper>
+  <FlipContainer>
+    <div>
+      Animated
+      <FlipElement>
+        <Component
+          animating={false}
+          flip={
+            Object {
+              "setFlipElement": [Function],
+            }
+          }
+        >
+          <div>
+            Element
+          </div>
+        </Component>
+      </FlipElement>
+    </div>
+  </FlipContainer>
+</Wrapper>
+`;
+
+exports[`ReactFlipContainer Should render back as static if the play promise was resolved 1`] = `
+<Wrapper>
+  <FlipContainer>
+    <div>
+      Static
+      <FlipElement>
+        <Component
+          animating={false}
+          flip={
+            Object {
+              "setFlipElement": [Function],
+            }
+          }
+        >
+          <div>
+            Element
+          </div>
+        </Component>
+      </FlipElement>
+    </div>
+  </FlipContainer>
+</Wrapper>
+`;
+
+exports[`ReactFlipContainer The container should render its children 1`] = `
+<div>
+  Static
+  Content
+</div>
+`;
