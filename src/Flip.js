@@ -1,11 +1,4 @@
-const getElementStyle = element => {
-  const style = window.getComputedStyle(element);
-  return {
-    ...element.getBoundingClientRect(),
-    opacity: parseFloat(style.opacity) || 1,
-    zIndex: parseInt(style.zIndex, 10) || 0
-  };
-};
+import getElementStyle from './getElementStyle';
 
 const defaultOptions = {
   duration: 300,
@@ -22,9 +15,18 @@ const defaultOptions = {
 class Flip {
   constructor({ element, options }) {
     this.element = element;
-    this.options = Object.assign({}, defaultOptions, options);
+    this.optionCreator = options;
+    this.updateOptions();
 
     this.animate = this.animate.bind(this);
+  }
+
+  updateOptions() {
+    if (typeof this.optionCreator === 'function') {
+      this.options = Object.assign({}, defaultOptions, this.optionCreator());
+    } else {
+      this.options = Object.assign({}, defaultOptions, this.optionCreator);
+    }
   }
 
   first() {
@@ -39,6 +41,8 @@ class Flip {
     if (!this._first || !this._last) {
       return;
     }
+
+    this.updateOptions();
 
     this._invert = {
       translateX: 0,
@@ -90,11 +94,8 @@ class Flip {
       this.resolve = resolve;
       this.reject = reject;
     });
-    if (window.requestAnimationFrame) {
-      window.requestAnimationFrame(this.animate);
-    } else {
-      setTimeout(this.animate, 0);
-    }
+
+    window.requestAnimationFrame(this.animate);
 
     return promise;
   }
@@ -102,17 +103,12 @@ class Flip {
   animate() {
     let time = (window.performance.now() - this._start) /
       (this.options.duration * this.options.durationMultiplier);
-    if (time > 1) time = 1;
-    if (time < 0) time = 0;
+    time = Math.min(1, Math.max(0, time));
 
     this.updateStyle(this.options.timing(time));
 
     if (time < 1) {
-      if (window.requestAnimationFrame) {
-        window.requestAnimationFrame(this.animate);
-      } else {
-        setTimeout(this.animate, 0);
-      }
+      window.requestAnimationFrame(this.animate);
     } else {
       this.resetStyle();
     }

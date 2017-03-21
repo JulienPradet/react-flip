@@ -1,6 +1,6 @@
 import React from 'react';
 
-const flipElement = (options = {}) =>
+const flipElement = options =>
   BaseComponent => {
     class FlipElement extends React.Component {
       constructor() {
@@ -24,7 +24,11 @@ const flipElement = (options = {}) =>
 
       updateTarget() {
         if (!this.element) return;
-        return this.context.flip.registerElement(this.element, options);
+
+        return this.context.flip.registerElement(
+          this.element,
+          typeof options === 'function' ? () => options(this.props) : options
+        );
       }
 
       render() {

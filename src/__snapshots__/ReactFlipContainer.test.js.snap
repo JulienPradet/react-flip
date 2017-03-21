@@ -1,5 +1,117 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ReactFlipContainer Should animate if shouldAnimate is a function that returns true 1`] = `
+<Wrapper
+  shouldAnimate={[Function]}
+>
+  <FlipContainer
+    shouldAnimate={[Function]}
+  >
+    <div>
+      Animated
+      <FlipElement>
+        <Component
+          animating={false}
+          flip={
+            Object {
+              "setFlipElement": [Function],
+            }
+          }
+        >
+          <div>
+            Element
+          </div>
+        </Component>
+      </FlipElement>
+    </div>
+  </FlipContainer>
+</Wrapper>
+`;
+
+exports[`ReactFlipContainer Should animate if shouldAnimate is true 1`] = `
+<Wrapper
+  shouldAnimate={true}
+>
+  <FlipContainer
+    shouldAnimate={true}
+  >
+    <div>
+      Animated
+      <FlipElement>
+        <Component
+          animating={false}
+          flip={
+            Object {
+              "setFlipElement": [Function],
+            }
+          }
+        >
+          <div>
+            Element
+          </div>
+        </Component>
+      </FlipElement>
+    </div>
+  </FlipContainer>
+</Wrapper>
+`;
+
+exports[`ReactFlipContainer Should not animate if shouldAnimate is a function that returns false 1`] = `
+<Wrapper
+  shouldAnimate={[Function]}
+>
+  <FlipContainer
+    shouldAnimate={[Function]}
+  >
+    <div>
+      Static
+      <FlipElement>
+        <Component
+          animating={false}
+          flip={
+            Object {
+              "setFlipElement": [Function],
+            }
+          }
+        >
+          <div>
+            Element
+          </div>
+        </Component>
+      </FlipElement>
+    </div>
+  </FlipContainer>
+</Wrapper>
+`;
+
+exports[`ReactFlipContainer Should not animate if shouldAnimate is false 1`] = `
+<Wrapper
+  shouldAnimate={false}
+>
+  <FlipContainer
+    shouldAnimate={false}
+  >
+    <div>
+      Static
+      <FlipElement>
+        <Component
+          animating={false}
+          flip={
+            Object {
+              "setFlipElement": [Function],
+            }
+          }
+        >
+          <div>
+            Element
+          </div>
+        </Component>
+      </FlipElement>
+    </div>
+  </FlipContainer>
+</Wrapper>
+`;
+
 exports[`ReactFlipContainer Should render as animating if play returned a promise 1`] = `
 <Wrapper>
   <FlipContainer>

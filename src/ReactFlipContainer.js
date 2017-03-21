@@ -3,7 +3,10 @@ import FlipGroup from './FlipGroup';
 import Flip from './Flip';
 
 const shouldAnimate = props =>
-  typeof props.shouldAnimate === 'undefined' || props.shouldAnimate;
+  typeof props.shouldAnimate === 'undefined' ||
+  (typeof props.shouldAnimate === 'function'
+    ? props.shouldAnimate(props)
+    : props.shouldAnimate);
 
 class FlipContainer extends React.Component {
   constructor() {
@@ -50,8 +53,8 @@ class FlipContainer extends React.Component {
     }
   }
 
-  registerElement(element, options = {}) {
-    const flip = new Flip({ element, ...options });
+  registerElement(element, options) {
+    const flip = new Flip({ element, options });
     return this.flip.addElement(flip);
   }
 

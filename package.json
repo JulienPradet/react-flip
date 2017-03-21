@@ -6,14 +6,12 @@
   "repository": "https://github.com/JulienPradet/react-flip",
   "author": "Julien Pradet",
   "license": "MIT",
-  "peerDependencies": {
-    "react": "15.x"
-  },
   "devDependencies": {
     "babel-core": "^6.24.0",
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.4.1",
     "babel-preset-react-app": "^2.2.0",
+    "classnames": "^2.2.5",
     "enzyme": "^2.7.1",
     "enzyme-to-json": "^1.5.0",
     "eslint": "^3.18.0",
@@ -28,6 +26,8 @@
     "react": "^15.4.2",
     "react-addons-test-utils": "^15.4.2",
     "react-dom": "^15.4.2",
+    "react-router": "^4.0.0",
+    "react-router-dom": "^4.0.0",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.4.2"
   },
@@ -35,7 +35,7 @@
     "build": "NODE_ENV=production webpack",
     "start": "NODE_ENV=development webpack-dev-server",
     "test": "jest --env=jsdom",
-    "coverage": "jest --coverage --env=jsdom",
-    "test/watch": "jest --watch --env=jsdom"
+    "test/coverage": "jest --coverage --env=jsdom",
+    "test/watch": "jest --watch --coverage --env=jsdom"
   }
 }

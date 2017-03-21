@@ -13,7 +13,7 @@ const ReflessElement = ReactFlipElement({})(props => (
   </div>
 ));
 
-const Element = ReactFlipElement({})(props => (
+const Element = ReactFlipElement()(props => (
   <div ref={props.flip.setFlipElement}>
     Element
   </div>
@@ -30,7 +30,7 @@ class Wrapper extends Component {
   }
   render() {
     return (
-      <ReactFlipContainer>
+      <ReactFlipContainer shouldAnimate={this.props.shouldAnimate}>
         {({ animating }) => (
           <div>
             {animating ? 'Animated' : 'Static'}
@@ -143,6 +143,46 @@ describe('ReactFlipContainer', () => {
     expect(toJson(tree)).toMatchSnapshot();
   });
 
+  test('Should not animate if shouldAnimate is false', () => {
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+    FlipGroup.prototype.play.mockImplementation(() => new Promise(() => {}));
+
+    const tree = mount(<Wrapper shouldAnimate={false} />);
+    tree.instance().toggle();
+
+    expect(toJson(tree)).toMatchSnapshot();
+  });
+
+  test('Should animate if shouldAnimate is true', () => {
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+    FlipGroup.prototype.play.mockImplementation(() => new Promise(() => {}));
+
+    const tree = mount(<Wrapper shouldAnimate={true} />);
+    tree.instance().toggle();
+
+    expect(toJson(tree)).toMatchSnapshot();
+  });
+
+  test('Should not animate if shouldAnimate is a function that returns false', () => {
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+    FlipGroup.prototype.play.mockImplementation(() => new Promise(() => {}));
+
+    const tree = mount(<Wrapper shouldAnimate={props => false} />);
+    tree.instance().toggle();
+
+    expect(toJson(tree)).toMatchSnapshot();
+  });
+
+  test('Should animate if shouldAnimate is a function that returns true', () => {
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+    FlipGroup.prototype.play.mockImplementation(() => new Promise(() => {}));
+
+    const tree = mount(<Wrapper shouldAnimate={props => true} />);
+    tree.instance().toggle();
+
+    expect(toJson(tree)).toMatchSnapshot();
+  });
+
   test('Should render back as static if the play promise was resolved', () => {
     let externalResolve;
     FlipGroup.prototype.invert.mockImplementation(() => true);
@@ -194,5 +234,33 @@ describe('ReactFlipContainer', () => {
     tree.instance().close();
 
     expect(removeMock.mock.calls.length).toBe(1);
+  });
+
+  test('Should remove an element the FlipGroup on unmount', () => {
+    const mockOptions = jest.fn();
+    mockOptions.mockImplementation(() => ({}));
+
+    const Element = ReactFlipElement(mockOptions)(props => (
+      <div ref={props.flip.setFlipElement}>
+        Element
+      </div>
+    ));
+
+    const Wrapper = () => (
+      <ReactFlipContainer>
+        {({ animating }) => (
+          <div>
+            {animating ? 'Animated' : 'Static'}
+            <Element props="test" />
+          </div>
+        )}
+      </ReactFlipContainer>
+    );
+
+    const tree = mount(<Wrapper />);
+
+    expect(
+      typeof FlipGroup.prototype.addElement.mock.calls[0][0].optionCreator
+    ).toBe('function');
   });
 });

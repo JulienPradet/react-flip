@@ -18,10 +18,12 @@ const makeFlip = ({ options = {}, firstStyle, lastStyle }) => {
 
   var flip = new Flip({
     element: document.createElement('div'),
-    options: {
-      ...options,
-      getElementStyle
-    }
+    options: typeof options === 'function'
+      ? () => ({
+          ...options(),
+          getElementStyle
+        })
+      : { ...options, getElementStyle }
   });
 
   setNextElementStyle(firstStyle);
@@ -98,6 +100,13 @@ const defaultOptions = {
 const testDefaultStyleAt = testAtSpecificTime(defaultOptions);
 
 describe('Flip', () => {
+  beforeEach(() => {
+    window.requestAnimationFrame = jest.fn();
+    window.requestAnimationFrame.mockImplementation(callback => {
+      setTimeout(callback, 0);
+    });
+  });
+
   test('Invert calculate how to transform a position to set it at his first position', () => {
     const flip = makeFlip(defaultOptions);
 
@@ -165,6 +174,18 @@ describe('Flip', () => {
     return testDefaultStyleAt({
       atTime: 499,
       options: { duration: 300, delay: 200 }
+    }).then(state => {
+      expect(state).not.toEqual({
+        transform: null,
+        opacity: ''
+      });
+    });
+  });
+
+  test('The options can be set by using a callback function', () => {
+    return testDefaultStyleAt({
+      atTime: 499,
+      options: () => ({ duration: 300, delay: 200 })
     }).then(state => {
       expect(state).not.toEqual({
         transform: null,
