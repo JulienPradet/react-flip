@@ -5,21 +5,26 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   devtool: process.env.NODE_ENV === 'production' ? 'source-map' : 'eval',
   entry: {
-    'react-flip': path.resolve(__dirname, 'src/index.js'),
-    'demo/react-flip': path.resolve(__dirname, 'demo/index.js')
+    'react-flip': process.env.NODE_ENV === 'production'
+      ? path.resolve(__dirname, 'src/index.js')
+      : path.resolve(__dirname, 'demo/index.js')
   },
   output: {
-    library: 'ReactFlip',
-    libraryTarget: 'umd',
+    // library: 'ReactFlip',
+    // libraryTarget: 'umd',
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].js'
+    filename: '[name].js',
+    publicPath: '/'
   },
   module: {
     rules: [
       {
         enforce: 'pre',
         test: /\.(js|jsx)$/,
-        include: path.resolve(__dirname, 'src'),
+        include: [
+          path.resolve(__dirname, 'src'),
+          path.resolve(__dirname, 'demo')
+        ],
         loader: 'eslint-loader',
         options: {
           emitError: true
@@ -27,7 +32,10 @@ module.exports = {
       },
       {
         test: /\.(js|jsx)$/,
-        include: path.resolve(__dirname, 'src'),
+        include: [
+          path.resolve(__dirname, 'src'),
+          path.resolve(__dirname, 'demo')
+        ],
         loader: 'babel-loader'
       }
     ]
@@ -36,7 +44,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       inject: false,
       template: path.resolve(__dirname, 'demo/index.html'),
-      filename: 'demo/index.html'
+      filename: 'index.html'
     }),
     new webpack.DefinePlugin({
       NODE_ENV: JSON.stringify(process.env.NODE_ENV)
@@ -54,5 +62,8 @@ module.exports = {
         screw_ie8: true
       }
     })
-  ]
+  ],
+  devServer: {
+    historyApiFallback: true
+  }
 };
