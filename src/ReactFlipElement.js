@@ -1,13 +1,12 @@
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 
 const flipElement = options =>
   BaseComponent => {
-    class FlipElement extends React.Component {
+    class FlipElement extends Component {
       constructor() {
         super();
         this.setFlipElement = this.setFlipElement.bind(this);
         this.updateTarget = this.updateTarget.bind(this);
-        this.state = { animating: false };
       }
 
       componentDidMount() {
@@ -35,7 +34,6 @@ const flipElement = options =>
         return (
           <BaseComponent
             flip={{ setFlipElement: this.setFlipElement }}
-            animating={this.state.animating}
             {...this.props}
           />
         );
@@ -43,8 +41,10 @@ const flipElement = options =>
     }
 
     FlipElement.contextTypes = {
-      flip: React.PropTypes.shape({
-        registerElement: React.PropTypes.func.isRequired
+      flip: PropTypes.shape({
+        status: PropTypes.func.isRequired,
+        defer: PropTypes.func.isRequired,
+        registerElement: PropTypes.func.isRequired
       }).isRequired
     };
 

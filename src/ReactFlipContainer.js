@@ -8,11 +8,21 @@ const shouldAnimate = props =>
     ? props.shouldAnimate(props)
     : props.shouldAnimate);
 
+export const STATIC = 'ReactFlip_static';
+export const BEFORE_ANIMATION = 'ReactFlip_before';
+export const ANIMATION = 'ReactFlip_animation';
+
 class FlipContainer extends React.Component {
   constructor() {
     super();
-    this.state = { animating: false };
+    this.state = {
+      animating: false,
+      preparingAnimation: false,
+      status: STATIC
+    };
     this.flip = new FlipGroup();
+    this.onAnimationStartCallbacks = [];
+    this.onAnimationEndCallbacks = [];
     this.registerElement = this.registerElement.bind(this);
     this.triggerAnimation = this.triggerAnimation.bind(this);
   }
@@ -20,46 +30,124 @@ class FlipContainer extends React.Component {
   getChildContext() {
     return {
       flip: {
-        registerElement: this.registerElement,
-        triggerAnimation: this.triggerAnimation
+        defer: () => this.props.defer,
+        status: () => this.state.status,
+        registerElement: this.registerElement
       }
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (shouldAnimate(nextProps) && this.props !== nextProps) {
-      this.flip.first();
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    if (shouldAnimate(this.props) && this.props !== prevProps) {
-      this.triggerAnimation();
-    }
-  }
-
-  triggerAnimation() {
-    this.flip.last();
-    if (this.flip.invert()) {
-      const promise = this.flip.play();
-
-      if (promise) {
-        this.setState({ animating: true }, () => {
-          promise.then(() => {
-            this.setState({ animating: false });
-          });
-        });
-      }
-    }
-  }
-
-  registerElement(element, options) {
+  registerElement(element, options, onAnimationStart, onAnimationEnd) {
+    this.onAnimtionStartCallbacks = [
+      ...this.onAnimationStartCallbacks,
+      onAnimationStart
+    ];
+    this.onAnimtionEndCallbacks = [
+      ...this.onAnimationEndCallbacks,
+      onAnimationEnd
+    ];
     const flip = new Flip({ element, options });
     return this.flip.addElement(flip);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (shouldAnimate(nextProps) && this.props !== nextProps) {
+      if (nextProps.defer) {
+        this.setState({
+          animating: false,
+          preparingAnimation: true,
+          status: BEFORE_ANIMATION
+        });
+        if (process.env.NODE_ENV === 'development' && this.props.debug) {
+          console.warn('ReactFlip: Setup');
+        }
+      } else {
+        this.first();
+      }
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (shouldAnimate(this.props)) {
+      if (this.props !== prevProps) {
+        if (this.props.defer) {
+          this.first();
+          this.setState({
+            animating: true,
+            preparingAnimation: false,
+            status: ANIMATION
+          });
+        } else {
+          this.triggerAnimation();
+        }
+      } else if (
+        prevState.preparingAnimation !== this.state.preparingAnimation
+      ) {
+        this.triggerAnimation();
+      }
+    }
+  }
+
+  triggerAnimation() {
+    this.last();
+    if (this.invert()) {
+      this.play();
+    }
+  }
+
+  first() {
+    this.flip.first();
+    if (process.env.NODE_ENV === 'development' && this.props.debug) {
+      console.warn('ReactFlip: First');
+    }
+  }
+
+  last() {
+    this.flip.last();
+    if (process.env.NODE_ENV === 'development' && this.props.debug) {
+      console.warn('ReactFlip: Last');
+    }
+  }
+
+  invert() {
+    const result = this.flip.invert();
+    if (process.env.NODE_ENV === 'development' && this.props.debug) {
+      console.warn('ReactFlip: Invert');
+    }
+    return result;
+  }
+
+  play() {
+    const playPromise = this.flip.play();
+
+    if (playPromise) {
+      if (process.env.NODE_ENV === 'development' && this.props.debug) {
+        console.warn('ReactFlip: Play');
+      }
+      this.onAnimationStart()
+        .then(() => playPromise)
+        .then(() => this.onAnimationEnd());
+    }
+  }
+
+  onAnimationStart() {
+    this.onAnimationStartCallbacks.forEach(callback => {
+      callback();
+    });
+    return Promise.resolve();
+  }
+
+  onAnimationEnd() {
+    this.onAnimationEndCallbacks.forEach(callback => {
+      callback();
+    });
+    return new Promise((resolve, reject) => {
+      this.setState({ animating: false, status: STATIC }, resolve);
+    });
+  }
+
   render() {
-    return this.props.children({ animating: this.state.animating });
+    return this.props.children();
   }
 }
 
@@ -69,8 +157,7 @@ FlipContainer.propTypes = {
 
 FlipContainer.childContextTypes = {
   flip: React.PropTypes.shape({
-    registerElement: React.PropTypes.func.isRequired,
-    triggerAnimation: React.PropTypes.func.isRequired
+    registerElement: React.PropTypes.func.isRequired
   }).isRequired
 };
 
