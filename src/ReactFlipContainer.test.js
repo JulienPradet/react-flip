@@ -31,9 +31,8 @@ class Wrapper extends Component {
   render() {
     return (
       <ReactFlipContainer shouldAnimate={this.props.shouldAnimate}>
-        {({ animating }) => (
+        {() => (
           <div>
-            {animating ? 'Animated' : 'Static'}
             <Element />
           </div>
         )}
@@ -50,9 +49,8 @@ describe('ReactFlipContainer', () => {
   test('The container should render its children', () => {
     const tree = shallow(
       <ReactFlipContainer>
-        {({ animating }) => (
+        {() => (
           <div>
-            {animating ? 'Animated' : 'Static'}
             Content
           </div>
         )}
@@ -70,9 +68,8 @@ describe('ReactFlipContainer', () => {
 
     const tree = mount(
       <ReactFlipContainer>
-        {({ animating }) => (
+        {() => (
           <div>
-            {animating ? 'Animated' : 'Static'}
             <Element />
           </div>
         )}
@@ -85,9 +82,8 @@ describe('ReactFlipContainer', () => {
   test('Should not register children if the ref is not defined', () => {
     const tree = mount(
       <ReactFlipContainer>
-        {({ animating }) => (
+        {() => (
           <div>
-            {animating ? 'Animated' : 'Static'}
             <ReflessElement />
           </div>
         )}
@@ -221,7 +217,7 @@ describe('ReactFlipContainer', () => {
       render() {
         return (
           <ReactFlipContainer>
-            {({ animating }) => (
+            {() => (
               <div>
                 {this.state.opened && <Element />}
               </div>
@@ -248,9 +244,8 @@ describe('ReactFlipContainer', () => {
 
     const Wrapper = () => (
       <ReactFlipContainer>
-        {({ animating }) => (
+        {() => (
           <div>
-            {animating ? 'Animated' : 'Static'}
             <Element props="test" />
           </div>
         )}

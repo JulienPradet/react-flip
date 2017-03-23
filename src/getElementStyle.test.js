@@ -52,4 +52,17 @@ describe('getElementStyle', () => {
 
     expect(getElementStyle(element).opacity).toEqual(1);
   });
+
+  test('should set a 0 opacity at 0', () => {
+    const element = document.createElement('div');
+    window.getComputedStyle = jest.fn();
+    window.getComputedStyle.mockImplementation(() => ({
+      opacity: '0'
+    }));
+
+    element.getBoundingClientRect = jest.fn();
+    element.getBoundingClientRect.mockImplementation(() => ({}));
+
+    expect(getElementStyle(element).opacity).toEqual(0);
+  });
 });

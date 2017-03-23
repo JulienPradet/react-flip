@@ -63,6 +63,11 @@ class FlipContainer extends React.Component {
         }
       } else {
         this.first();
+        this.setState({
+          animating: true,
+          preparingAnimation: false,
+          status: ANIMATION
+        });
       }
     }
   }

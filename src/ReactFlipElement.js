@@ -33,7 +33,10 @@ const flipElement = options =>
       render() {
         return (
           <BaseComponent
-            flip={{ setFlipElement: this.setFlipElement }}
+            flip={{
+              setFlipElement: this.setFlipElement,
+              status: this.context.flip.status()
+            }}
             {...this.props}
           />
         );

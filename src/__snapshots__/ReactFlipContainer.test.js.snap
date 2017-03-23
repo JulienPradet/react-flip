@@ -8,13 +8,12 @@ exports[`ReactFlipContainer Should animate if shouldAnimate is a function that r
     shouldAnimate={[Function]}
   >
     <div>
-      Animated
       <FlipElement>
         <Component
-          animating={false}
           flip={
             Object {
               "setFlipElement": [Function],
+              "status": "ReactFlip_animation",
             }
           }
         >
@@ -36,13 +35,12 @@ exports[`ReactFlipContainer Should animate if shouldAnimate is true 1`] = `
     shouldAnimate={true}
   >
     <div>
-      Animated
       <FlipElement>
         <Component
-          animating={false}
           flip={
             Object {
               "setFlipElement": [Function],
+              "status": "ReactFlip_animation",
             }
           }
         >
@@ -64,13 +62,12 @@ exports[`ReactFlipContainer Should not animate if shouldAnimate is a function th
     shouldAnimate={[Function]}
   >
     <div>
-      Static
       <FlipElement>
         <Component
-          animating={false}
           flip={
             Object {
               "setFlipElement": [Function],
+              "status": "ReactFlip_static",
             }
           }
         >
@@ -92,13 +89,12 @@ exports[`ReactFlipContainer Should not animate if shouldAnimate is false 1`] = `
     shouldAnimate={false}
   >
     <div>
-      Static
       <FlipElement>
         <Component
-          animating={false}
           flip={
             Object {
               "setFlipElement": [Function],
+              "status": "ReactFlip_static",
             }
           }
         >
@@ -116,13 +112,12 @@ exports[`ReactFlipContainer Should render as animating if play returned a promis
 <Wrapper>
   <FlipContainer>
     <div>
-      Animated
       <FlipElement>
         <Component
-          animating={false}
           flip={
             Object {
               "setFlipElement": [Function],
+              "status": "ReactFlip_animation",
             }
           }
         >
@@ -140,13 +135,12 @@ exports[`ReactFlipContainer Should render back as static if the play promise was
 <Wrapper>
   <FlipContainer>
     <div>
-      Static
       <FlipElement>
         <Component
-          animating={false}
           flip={
             Object {
               "setFlipElement": [Function],
+              "status": "ReactFlip_static",
             }
           }
         >
@@ -162,7 +156,6 @@ exports[`ReactFlipContainer Should render back as static if the play promise was
 
 exports[`ReactFlipContainer The container should render its children 1`] = `
 <div>
-  Static
   Content
 </div>
 `;
