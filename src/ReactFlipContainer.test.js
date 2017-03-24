@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { mount, shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
-import ReactFlipContainer from './ReactFlipContainer';
+import ReactFlipContainer, { STATIC } from './ReactFlipContainer';
 import ReactFlipElement from './ReactFlipElement';
 import FlipGroup from './FlipGroup';
 
@@ -19,16 +19,23 @@ const Element = ReactFlipElement()(props => (
   </div>
 ));
 
+const DeferredElement = ReactFlipElement({ defer: true })(props => (
+  <div ref={props.flip.setFlipElement}>
+    Element
+  </div>
+));
+
 class Wrapper extends Component {
-  constructor() {
+  constructor(props) {
     super();
-    this.state = { opened: false };
+    this.state = { opened: props.initiallyOpened || false };
     this.toggle = this.toggle.bind(this);
   }
   toggle() {
     this.setState(state => ({ opened: !state.opened }));
   }
   render() {
+    const RenderedElement = this.props.Element || Element;
     return (
       <ReactFlipContainer
         shouldAnimate={this.props.shouldAnimate}
@@ -36,7 +43,7 @@ class Wrapper extends Component {
       >
         {() => (
           <div>
-            <Element />
+            <RenderedElement opened={this.state.opened} />
           </div>
         )}
       </ReactFlipContainer>
@@ -279,5 +286,87 @@ describe('ReactFlipContainer', () => {
       invert: [[{ deferred: false }], [{ deferred: undefined }]],
       play: [[]]
     });
+  });
+
+  test('Should render back as static even with deferred elements', () => {
+    let externalResolve;
+    let removeMock = jest.fn();
+    FlipGroup.prototype.addElement.mockImplementation(() => removeMock);
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+    FlipGroup.prototype.play.mockImplementation(
+      () => new Promise(resolve => externalResolve = resolve)
+    );
+
+    const tree = mount(<Wrapper defer Element={DeferredElement} />);
+    tree.instance().toggle();
+
+    expect({
+      addElement: FlipGroup.prototype.addElement.mock.calls.length,
+      removeElement: removeMock.mock.calls.length
+    }).toEqual({
+      addElement: 2,
+      removeElement: 1
+    });
+  });
+
+  test('Should add Element on update even if it was not there at first', () => {
+    let externalResolve;
+    let removeMock = jest.fn();
+    FlipGroup.prototype.addElement.mockImplementation(() => removeMock);
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+    FlipGroup.prototype.play.mockImplementation(
+      () => new Promise(resolve => externalResolve = resolve)
+    );
+
+    const DeferredElement = ReactFlipElement({ defer: true })(props => {
+      if (!props.opened && props.flip.status === STATIC) {
+        return null;
+      }
+
+      return (
+        <div ref={props.flip.setFlipElement}>
+          Element
+        </div>
+      );
+    });
+
+    const tree = mount(<Wrapper defer Element={DeferredElement} />);
+    tree.instance().toggle();
+
+    expect({
+      addElement: FlipGroup.prototype.addElement.mock.calls.length,
+      removeElement: removeMock.mock.calls.length
+    }).toEqual({
+      addElement: 1,
+      removeElement: 0
+    });
+  });
+
+  test('Should not crash when removing an Element that was not registered in the first place', () => {
+    let externalResolve;
+    let removeMock = jest.fn();
+    FlipGroup.prototype.addElement.mockImplementation(() => removeMock);
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+    FlipGroup.prototype.play.mockImplementation(
+      () => new Promise(resolve => externalResolve = resolve)
+    );
+
+    const DeferredElement = ReactFlipElement({ defer: true })(props => {
+      if (!props.opened && props.flip.status === STATIC) {
+        return null;
+      }
+
+      return (
+        <div ref={props.flip.setFlipElement}>
+          Element
+        </div>
+      );
+    });
+
+    const tree = mount(
+      <Wrapper defer initiallyOpened={false} Element={DeferredElement} />
+    );
+    tree.unmount();
+    expect(FlipGroup.prototype.addElement.mock.calls.length).toBe(0);
   });
 });

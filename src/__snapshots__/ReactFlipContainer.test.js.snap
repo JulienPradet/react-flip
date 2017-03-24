@@ -9,7 +9,9 @@ exports[`ReactFlipContainer Should animate if shouldAnimate is a function that r
     shouldAnimate={[Function]}
   >
     <div>
-      <FlipElement>
+      <FlipElement
+        opened={true}
+      >
         <Component
           flip={
             Object {
@@ -17,6 +19,7 @@ exports[`ReactFlipContainer Should animate if shouldAnimate is a function that r
               "status": "ReactFlip_animation",
             }
           }
+          opened={true}
         >
           <div>
             Element
@@ -37,7 +40,9 @@ exports[`ReactFlipContainer Should animate if shouldAnimate is true 1`] = `
     shouldAnimate={true}
   >
     <div>
-      <FlipElement>
+      <FlipElement
+        opened={true}
+      >
         <Component
           flip={
             Object {
@@ -45,6 +50,7 @@ exports[`ReactFlipContainer Should animate if shouldAnimate is true 1`] = `
               "status": "ReactFlip_animation",
             }
           }
+          opened={true}
         >
           <div>
             Element
@@ -65,7 +71,9 @@ exports[`ReactFlipContainer Should not animate if shouldAnimate is a function th
     shouldAnimate={[Function]}
   >
     <div>
-      <FlipElement>
+      <FlipElement
+        opened={true}
+      >
         <Component
           flip={
             Object {
@@ -73,6 +81,7 @@ exports[`ReactFlipContainer Should not animate if shouldAnimate is a function th
               "status": "ReactFlip_static",
             }
           }
+          opened={true}
         >
           <div>
             Element
@@ -93,7 +102,9 @@ exports[`ReactFlipContainer Should not animate if shouldAnimate is false 1`] = `
     shouldAnimate={false}
   >
     <div>
-      <FlipElement>
+      <FlipElement
+        opened={true}
+      >
         <Component
           flip={
             Object {
@@ -101,6 +112,7 @@ exports[`ReactFlipContainer Should not animate if shouldAnimate is false 1`] = `
               "status": "ReactFlip_static",
             }
           }
+          opened={true}
         >
           <div>
             Element
@@ -118,7 +130,9 @@ exports[`ReactFlipContainer Should render as animating if play returned a promis
     defer={false}
   >
     <div>
-      <FlipElement>
+      <FlipElement
+        opened={true}
+      >
         <Component
           flip={
             Object {
@@ -126,6 +140,7 @@ exports[`ReactFlipContainer Should render as animating if play returned a promis
               "status": "ReactFlip_animation",
             }
           }
+          opened={true}
         >
           <div>
             Element
@@ -143,7 +158,9 @@ exports[`ReactFlipContainer Should render back as static if the play promise was
     defer={false}
   >
     <div>
-      <FlipElement>
+      <FlipElement
+        opened={true}
+      >
         <Component
           flip={
             Object {
@@ -151,6 +168,7 @@ exports[`ReactFlipContainer Should render back as static if the play promise was
               "status": "ReactFlip_static",
             }
           }
+          opened={true}
         >
           <div>
             Element
