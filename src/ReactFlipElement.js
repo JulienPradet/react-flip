@@ -1,7 +1,11 @@
 import React, { Component, PropTypes } from 'react';
+import { BEFORE_ANIMATION } from './ReactFlipContainer';
 
 const flipElement = (options = {}) =>
   BaseComponent => {
+    const getOptions = props =>
+      typeof options === 'function' ? () => options(props) : options;
+
     class FlipElement extends Component {
       constructor() {
         super();
@@ -13,8 +17,18 @@ const flipElement = (options = {}) =>
         this.removeTarget = this.updateTarget();
       }
 
+      componentDidUpdate() {
+        if (
+          this.context.flip.status() === BEFORE_ANIMATION &&
+          getOptions(this.props).defer
+        ) {
+          if (this.removeTarget) this.removeTarget();
+          this.removeTarget = this.updateTarget();
+        }
+      }
+
       componentWillUnmount() {
-        this.removeTarget();
+        if (this.removeTarget) this.removeTarget();
       }
 
       setFlipElement(element) {
@@ -26,9 +40,7 @@ const flipElement = (options = {}) =>
 
         return this.context.flip.registerElement({
           element: this.element,
-          options: typeof options === 'function'
-            ? () => options(this.props)
-            : options
+          options: getOptions(this.props)
         });
       }
 

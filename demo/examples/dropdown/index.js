@@ -1,11 +1,10 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import ReactFlipContainer, {
   ANIMATION,
   BEFORE_ANIMATION,
   STATIC
 } from '../../../src/ReactFlipContainer';
 import ReactFlipElement from '../../../src/ReactFlipElement';
-import withFlipStatus from '../../../src/withFlipStatus';
 
 const statusToStyleCreator = {
   [ANIMATION]: (props, options) => props.show ? {} : options.leaveStyle,
@@ -13,57 +12,36 @@ const statusToStyleCreator = {
   [STATIC]: (props, options) => ({})
 };
 
-const TogglableFlipElement = (options = {}) =>
-  BaseComponent => {
-    const makeStyle = (props, status) => ({
-      ...props.style,
-      ...statusToStyleCreator[status](props, options)
-    });
-
-    const FlipBaseComponent = ReactFlipElement({ ...options, defer: true })(
-      BaseComponent
+const Content = ReactFlipElement({ defer: true })(props => {
+  if (props.show || props.flip.status !== STATIC) {
+    return (
+      <div
+        ref={props.flip.setFlipElement}
+        style={{
+          marginTop: 20,
+          ...statusToStyleCreator[props.flip.status](props, {
+            enterStyle: { marginTop: 0, opacity: 0 },
+            leaveStyle: { marginTop: 40, opacity: 0 }
+          })
+        }}
+      >
+        Content
+      </div>
     );
-
-    class TogglableFlipElement extends Component {
-      render() {
-        const { flip, ...props } = this.props;
-        if (props.show || flip.status() !== STATIC) {
-          return (
-            <FlipBaseComponent
-              {...props}
-              style={makeStyle(props, flip.status())}
-            />
-          );
-        } else {
-          return null;
-        }
-      }
-    }
-
-    TogglableFlipElement.propTypes = {
-      show: PropTypes.bool.isRequired
-    };
-
-    return withFlipStatus()(TogglableFlipElement);
-  };
-
-const Content = TogglableFlipElement({
-  enterStyle: { marginTop: 0, opacity: 0 },
-  leaveStyle: { marginTop: 40, opacity: 0 }
-})(props => (
-  <div
-    ref={props.flip.setFlipElement}
-    style={{ marginTop: 20, ...props.style }}
-  >
-    Content
-  </div>
-));
+  } else {
+    return null;
+  }
+});
 
 class Dropdown extends Component {
   constructor() {
     super();
     this.state = { opened: false };
     this.toggle = this.toggle.bind(this);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state !== nextState;
   }
 
   toggle() {
