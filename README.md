@@ -10,6 +10,10 @@ However, this lib might gather some higher level utilities too in order to make 
 
 The underlying concept is [FLIP](https://aerotwist.com/blog/flip-your-animations/).
 
+## Demo
+
+[Online Demo](https://julienpradet.github.io/react-flip)
+
 ## Usage
 
 The documentation is currently being worked on.
