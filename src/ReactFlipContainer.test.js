@@ -203,6 +203,30 @@ describe('ReactFlipContainer', () => {
     });
   });
 
+  test('Should call the animationEndCallback once the animation has ended', () => {
+    let externalResolve;
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+    FlipGroup.prototype.play.mockImplementation(
+      () => new Promise(resolve => externalResolve = resolve)
+    );
+
+    const onAnimationEnd = jest.fn();
+
+    const tree = mount(<Wrapper onAnimationEnd={onAnimationEnd} />);
+    tree.instance().toggle();
+    externalResolve();
+
+    return new Promise(resolve => {
+      setTimeout(
+        () => {
+          expect(onAnimationEnd.mock.calls.length).toBe(1);
+          resolve();
+        },
+        0
+      );
+    });
+  });
+
   test('Should remove an element the FlipGroup on unmount', () => {
     const removeMock = jest.fn();
     FlipGroup.prototype.addElement.mockImplementation(() => removeMock);
@@ -272,6 +296,25 @@ describe('ReactFlipContainer', () => {
       first: [[{ deferred: false }], [{ deferred: true }]],
       last: [[{ deferred: false }], [{ deferred: undefined }]],
       invert: [[{ deferred: false }], [{ deferred: undefined }]],
+      play: [[]]
+    });
+  });
+
+  test('Should defer all elements when forceDefer option is used', () => {
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+
+    const tree = mount(<Wrapper forceDefer />);
+    tree.instance().toggle();
+
+    expect({
+      first: FlipGroup.prototype.first.mock.calls,
+      last: FlipGroup.prototype.last.mock.calls,
+      invert: FlipGroup.prototype.invert.mock.calls,
+      play: FlipGroup.prototype.play.mock.calls
+    }).toEqual({
+      first: [[{ deferred: undefined }]],
+      last: [[{ deferred: undefined }]],
+      invert: [[{ deferred: undefined }]],
       play: [[]]
     });
   });
@@ -356,5 +399,29 @@ describe('ReactFlipContainer', () => {
     );
     tree.unmount();
     expect(FlipGroup.prototype.addElement.mock.calls.length).toBe(0);
+  });
+
+  test('Should accept options in their function form and the resulting defer should be a function too', () => {
+    let externalResolve;
+
+    let optionMock = jest.fn();
+    optionMock.mockImplementation(() => ({
+      defer: true
+    }));
+
+    FlipGroup.prototype.addElement.mockImplementation((element, defer) => {
+      expect(defer()).toBe(true);
+    });
+
+    const DeferredElement = ReactFlipElement(optionMock)(props => {
+      return (
+        <div ref={props.flip.setFlipElement}>
+          Element
+        </div>
+      );
+    });
+
+    const tree = mount(<Wrapper defer Element={DeferredElement} />);
+    tree.instance().toggle();
   });
 });

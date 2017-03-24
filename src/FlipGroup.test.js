@@ -26,11 +26,18 @@ describe('FlipGroup', () => {
     expect(group.elements.length).toBe(0);
   });
 
+  test('It should be possible to add a deferred Flip element using a function', () => {
+    const element = new Flip();
+    const group = new FlipGroup();
+    const remove = group.addElement(element, () => true);
+    expect(group.getConcernedElements(true).length).toBe(1);
+  });
+
   test('It should be possible to add a deferred Flip element', () => {
     const element = new Flip();
     const group = new FlipGroup();
     const remove = group.addElement(element, true);
-    expect(group.elementsDeferred.length).toBe(1);
+    expect(group.getConcernedElements(true).length).toBe(1);
   });
 
   test('It should be possible to remove a deferred Flip element', () => {
@@ -38,7 +45,7 @@ describe('FlipGroup', () => {
     const group = new FlipGroup();
     const remove = group.addElement(element, true);
     remove();
-    expect(group.elementsDeferred.length).toBe(0);
+    expect(group.getConcernedElements(true).length).toBe(0);
   });
 
   test('First method on a group should call it on children', () => {
