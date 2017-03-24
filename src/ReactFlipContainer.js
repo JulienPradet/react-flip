@@ -37,16 +37,8 @@ class FlipContainer extends React.Component {
     };
   }
 
-  registerElement(element, options, onAnimationStart, onAnimationEnd) {
-    this.onAnimtionStartCallbacks = [
-      ...this.onAnimationStartCallbacks,
-      onAnimationStart
-    ];
-    this.onAnimtionEndCallbacks = [
-      ...this.onAnimationEndCallbacks,
-      onAnimationEnd
-    ];
-    const flip = new Flip({ element, options });
+  registerElement({ element, options }) {
+    const flip = new Flip({ element, options, debug: this.props.debug });
     return this.flip.addElement(flip);
   }
 
@@ -58,9 +50,6 @@ class FlipContainer extends React.Component {
           preparingAnimation: true,
           status: BEFORE_ANIMATION
         });
-        if (process.env.NODE_ENV === 'development' && this.props.debug) {
-          console.warn('ReactFlip: Setup');
-        }
       } else {
         this.first();
         this.setState({
@@ -101,51 +90,64 @@ class FlipContainer extends React.Component {
   }
 
   first() {
+    if (process.env.NODE_ENV === 'development' && this.props.debug) {
+      console.groupCollapsed('ReactFlip: First');
+    }
     this.flip.first();
     if (process.env.NODE_ENV === 'development' && this.props.debug) {
-      console.warn('ReactFlip: First');
+      console.groupEnd();
     }
   }
 
   last() {
+    if (process.env.NODE_ENV === 'development' && this.props.debug) {
+      console.groupCollapsed('ReactFlip: Last');
+    }
     this.flip.last();
     if (process.env.NODE_ENV === 'development' && this.props.debug) {
-      console.warn('ReactFlip: Last');
+      console.groupEnd();
     }
   }
 
   invert() {
+    if (process.env.NODE_ENV === 'development' && this.props.debug) {
+      console.groupCollapsed('ReactFlip: Invert');
+    }
     const result = this.flip.invert();
     if (process.env.NODE_ENV === 'development' && this.props.debug) {
-      console.warn('ReactFlip: Invert');
+      console.groupEnd();
     }
     return result;
   }
 
   play() {
+    if (process.env.NODE_ENV === 'development' && this.props.debug) {
+      console.groupCollapsed('ReactFlip: Play');
+    }
     const playPromise = this.flip.play();
 
     if (playPromise) {
-      if (process.env.NODE_ENV === 'development' && this.props.debug) {
-        console.warn('ReactFlip: Play');
-      }
       this.onAnimationStart()
         .then(() => playPromise)
+        .then(() => {
+          if (process.env.NODE_ENV === 'development' && this.props.debug) {
+            console.groupEnd();
+          }
+        })
         .then(() => this.onAnimationEnd());
+    } else {
+      if (process.env.NODE_ENV === 'development' && this.props.debug) {
+        console.debug('ReactFlip: Nothing to play');
+        console.groupEnd();
+      }
     }
   }
 
   onAnimationStart() {
-    this.onAnimationStartCallbacks.forEach(callback => {
-      callback();
-    });
     return Promise.resolve();
   }
 
   onAnimationEnd() {
-    this.onAnimationEndCallbacks.forEach(callback => {
-      callback();
-    });
     return new Promise((resolve, reject) => {
       this.setState({ animating: false, status: STATIC }, resolve);
     });

@@ -28,7 +28,6 @@ const TogglableFlipElement = (options = {}) =>
     class TogglableFlipElement extends Component {
       render() {
         const { flip, ...props } = this.props;
-        console.log(flip.status(), props.show, makeStyle(props, flip.status()));
         if (props.show || flip.status() !== STATIC) {
           return (
             <FlipBaseComponent

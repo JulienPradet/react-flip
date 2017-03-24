@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import { ReactFlipContainer, ReactFlipElement } from '../../../src/index.js';
 
-const Element = ReactFlipElement(props => ({
-  delay: props.delay,
-  duration: props.duration
-}))(props => (
+const Element = ReactFlipElement()(props => (
   <div
     ref={props.flip.setFlipElement}
     style={{
@@ -19,7 +16,6 @@ class Basic extends Component {
   constructor() {
     super();
     this.state = {
-      delay: 0,
       height: 1
     };
     this.increment = this.increment.bind(this);
@@ -37,16 +33,12 @@ class Basic extends Component {
     return (
       <div>
         Basics
-        <ReactFlipContainer>
+        <ReactFlipContainer debug>
           {() => (
             <div>
               <button onClick={this.increment}>Bigger!</button>
               <button onClick={this.decrement}>Smaller!</button>
-              <Element
-                height={this.state.height}
-                delay={this.state.delay}
-                duration={this.state.duration}
-              />
+              <Element height={this.state.height} />
             </div>
           )}
         </ReactFlipContainer>
