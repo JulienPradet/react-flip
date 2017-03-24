@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component, PropTypes } from 'react';
 import FlipGroup from './FlipGroup';
 import Flip from './Flip';
 
@@ -12,15 +12,15 @@ export const STATIC = 'ReactFlip_static';
 export const BEFORE_ANIMATION = 'ReactFlip_before';
 export const ANIMATION = 'ReactFlip_animation';
 
-class FlipContainer extends React.Component {
-  constructor() {
+class FlipContainer extends Component {
+  constructor(props) {
     super();
     this.state = {
       animating: false,
       preparingAnimation: false,
       status: STATIC
     };
-    this.flip = new FlipGroup();
+    this.flip = new FlipGroup({ debug: props.debug });
     this.onAnimationStartCallbacks = [];
     this.onAnimationEndCallbacks = [];
     this.registerElement = this.registerElement.bind(this);
@@ -37,14 +37,15 @@ class FlipContainer extends React.Component {
     };
   }
 
-  registerElement({ element, options }) {
+  registerElement({ element, options, defer }) {
     const flip = new Flip({ element, options, debug: this.props.debug });
-    return this.flip.addElement(flip);
+    return this.flip.addElement(flip, defer);
   }
 
   componentWillReceiveProps(nextProps) {
     if (shouldAnimate(nextProps) && this.props !== nextProps) {
       if (nextProps.defer) {
+        this.first({ deferred: false });
         this.setState({
           animating: false,
           preparingAnimation: true,
@@ -65,7 +66,7 @@ class FlipContainer extends React.Component {
     if (shouldAnimate(this.props)) {
       if (this.props !== prevProps) {
         if (this.props.defer) {
-          this.first();
+          this.first({ deferred: true });
           this.setState({
             animating: true,
             preparingAnimation: false,
@@ -89,11 +90,13 @@ class FlipContainer extends React.Component {
     }
   }
 
-  first() {
+  first({ deferred } = { deferred: false }) {
     if (process.env.NODE_ENV === 'development' && this.props.debug) {
-      console.groupCollapsed('ReactFlip: First');
+      console.groupCollapsed(
+        `ReactFlip: First ${deferred ? '(deferred)' : '(normal)'}`
+      );
     }
-    this.flip.first();
+    this.flip.first({ deferred });
     if (process.env.NODE_ENV === 'development' && this.props.debug) {
       console.groupEnd();
     }
@@ -159,12 +162,17 @@ class FlipContainer extends React.Component {
 }
 
 FlipContainer.propTypes = {
-  children: React.PropTypes.func.isRequired
+  defer: PropTypes.bool.isRequired,
+  children: PropTypes.func.isRequired
+};
+
+FlipContainer.defaultProps = {
+  defer: false
 };
 
 FlipContainer.childContextTypes = {
-  flip: React.PropTypes.shape({
-    registerElement: React.PropTypes.func.isRequired
+  flip: PropTypes.shape({
+    registerElement: PropTypes.func.isRequired
   }).isRequired
 };
 

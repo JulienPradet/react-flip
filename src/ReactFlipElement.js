@@ -24,10 +24,13 @@ const flipElement = options =>
       updateTarget() {
         if (!this.element) return;
 
-        return this.context.flip.registerElement(
-          this.element,
-          typeof options === 'function' ? () => options(this.props) : options
-        );
+        return this.context.flip.registerElement({
+          element: this.element,
+          options: typeof options === 'function'
+            ? () => options(this.props)
+            : options,
+          defer: this.props.defer
+        });
       }
 
       render() {
@@ -43,10 +46,17 @@ const flipElement = options =>
       }
     }
 
+    FlipElement.propTypes = {
+      defer: PropTypes.bool
+    };
+
+    FlipElement.defaultProps = {
+      defer: false
+    };
+
     FlipElement.contextTypes = {
       flip: PropTypes.shape({
         status: PropTypes.func.isRequired,
-        defer: PropTypes.func.isRequired,
         registerElement: PropTypes.func.isRequired
       }).isRequired
     };

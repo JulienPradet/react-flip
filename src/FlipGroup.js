@@ -1,36 +1,45 @@
 import Flip from './Flip';
 
+const getElementKey = defer => defer ? 'elementsDeferred' : 'elements';
+
 class FlipGroup {
   constructor() {
     this.elements = [];
+    this.elementsDeferred = [];
   }
 
-  addElement(element) {
+  addElement(element, defer) {
     if (element instanceof Flip) {
-      this.elements = [...this.elements, element];
+      const elementKey = getElementKey(defer);
+      this[elementKey] = [...this[elementKey], element];
 
       return () => {
-        this.elements = this.elements.filter(current => current !== element);
+        this[elementKey] = this[elementKey].filter(
+          current => current !== element
+        );
       };
     }
   }
 
-  first() {
-    this.elements.forEach(element => element.first());
+  first({ deferred } = { deferred: false }) {
+    this[getElementKey(deferred)].forEach(element => element.first());
   }
 
   last() {
     this.elements.forEach(element => element.last());
+    this.elementsDeferred.forEach(element => element.last());
   }
 
   invert() {
     return this.elements
+      .concat(this.elementsDeferred)
       .map(element => element.invert())
       .some(hasInverted => hasInverted);
   }
 
   play() {
     const playPromises = this.elements
+      .concat(this.elementsDeferred)
       .map(element => element.play())
       .filter(promise => promise);
 

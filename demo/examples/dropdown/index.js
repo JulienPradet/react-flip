@@ -8,12 +8,9 @@ import ReactFlipElement from '../../../src/ReactFlipElement';
 import withFlipStatus from '../../../src/withFlipStatus';
 
 const statusToStyleCreator = {
-  [ANIMATION]: (props, options) =>
-    props.show ? options.enterStyle : options.leaveStyle,
-  [BEFORE_ANIMATION]: (props, options) =>
-    props.show ? options.leaveStyle : options.enterStyle,
-  [STATIC]: (props, options) =>
-    props.show ? options.enterStyle : options.leaveStyle
+  [ANIMATION]: (props, options) => props.show ? {} : options.leaveStyle,
+  [BEFORE_ANIMATION]: (props, options) => props.show ? options.enterStyle : {},
+  [STATIC]: (props, options) => ({})
 };
 
 const TogglableFlipElement = (options = {}) =>
@@ -32,6 +29,7 @@ const TogglableFlipElement = (options = {}) =>
           return (
             <FlipBaseComponent
               {...props}
+              defer
               style={makeStyle(props, flip.status())}
             />
           );
@@ -49,10 +47,13 @@ const TogglableFlipElement = (options = {}) =>
   };
 
 const Content = TogglableFlipElement({
-  enterStyle: { marginTop: 20, opacity: 1 },
-  leaveStyle: { marginTop: 0, opacity: 0 }
+  enterStyle: { marginTop: 0, opacity: 0 },
+  leaveStyle: { marginTop: 40, opacity: 0 }
 })(props => (
-  <div ref={props.flip.setFlipElement} style={props.style}>
+  <div
+    ref={props.flip.setFlipElement}
+    style={{ marginTop: 20, ...props.style }}
+  >
     Content
   </div>
 ));
