@@ -203,6 +203,30 @@ describe('ReactFlipContainer', () => {
     });
   });
 
+  test('Should call the animationEndCallback once the animation has ended', () => {
+    let externalResolve;
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+    FlipGroup.prototype.play.mockImplementation(
+      () => new Promise(resolve => externalResolve = resolve)
+    );
+
+    const onAnimationEnd = jest.fn();
+
+    const tree = mount(<Wrapper onAnimationEnd={onAnimationEnd} />);
+    tree.instance().toggle();
+    externalResolve();
+
+    return new Promise(resolve => {
+      setTimeout(
+        () => {
+          expect(onAnimationEnd.mock.calls.length).toBe(1);
+          resolve();
+        },
+        0
+      );
+    });
+  });
+
   test('Should remove an element the FlipGroup on unmount', () => {
     const removeMock = jest.fn();
     FlipGroup.prototype.addElement.mockImplementation(() => removeMock);

@@ -173,7 +173,10 @@ class ReactFlipContainer extends Component {
 
   onAnimationEnd() {
     return new Promise((resolve, reject) => {
-      this.setState({ animating: false, status: STATIC }, resolve);
+      this.setState({ animating: false, status: STATIC }, () => {
+        this.props.onAnimationEnd && this.props.onAnimationEnd();
+        resolve();
+      });
     });
   }
 
