@@ -30,7 +30,10 @@ class Wrapper extends Component {
   }
   render() {
     return (
-      <ReactFlipContainer shouldAnimate={this.props.shouldAnimate}>
+      <ReactFlipContainer
+        shouldAnimate={this.props.shouldAnimate}
+        {...this.props}
+      >
         {() => (
           <div>
             <Element />
@@ -257,5 +260,24 @@ describe('ReactFlipContainer', () => {
     expect(
       typeof FlipGroup.prototype.addElement.mock.calls[0][0].optionCreator
     ).toBe('function');
+  });
+
+  test('Should FLI the non deferred elements first and then update the deferred ones', () => {
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+
+    const tree = mount(<Wrapper defer />);
+    tree.instance().toggle();
+
+    expect({
+      first: FlipGroup.prototype.first.mock.calls,
+      last: FlipGroup.prototype.last.mock.calls,
+      invert: FlipGroup.prototype.invert.mock.calls,
+      play: FlipGroup.prototype.play.mock.calls
+    }).toEqual({
+      first: [[{ deferred: false }], [{ deferred: true }]],
+      last: [[{ deferred: false }], [{ deferred: undefined }]],
+      invert: [[{ deferred: false }], [{ deferred: undefined }]],
+      play: [[]]
+    });
   });
 });

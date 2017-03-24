@@ -6,7 +6,7 @@ const getConcernedElements = (defer, elements, deferredElements) => {
   if (defer === undefined) {
     return elements.concat(deferredElements);
   } else if (defer) {
-    return deferredElements.concat(deferredElements);
+    return deferredElements;
   } else {
     return elements;
   }

@@ -7,17 +7,6 @@ const flipElement = (options = {}) =>
         super();
         this.setFlipElement = this.setFlipElement.bind(this);
         this.updateTarget = this.updateTarget.bind(this);
-
-        if (process.env.NODE_ENV === 'development') {
-          const defer = typeof options === 'function'
-            ? () => options(this.props).defer
-            : options.defer;
-          if (defer && context.flip.defer() === false) {
-            console.warn(
-              'ReactFlipContainer is not in defer mode while the ReactFlipElement is. This most likely will run unexpected behaviors. Make sure to update your container with the `defer` prop.'
-            );
-          }
-        }
       }
 
       componentDidMount() {
@@ -58,7 +47,6 @@ const flipElement = (options = {}) =>
 
     FlipElement.contextTypes = {
       flip: PropTypes.shape({
-        defer: PropTypes.func.isRequired,
         status: PropTypes.func.isRequired,
         registerElement: PropTypes.func.isRequired
       }).isRequired

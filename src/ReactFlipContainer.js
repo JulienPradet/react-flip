@@ -2,6 +2,9 @@ import { Component, PropTypes } from 'react';
 import FlipGroup from './FlipGroup';
 import Flip from './Flip';
 
+const getDeferType = deferred =>
+  deferred === undefined ? '' : deferred ? '(deferred)' : '(normal)';
+
 const shouldAnimate = props =>
   typeof props.shouldAnimate === 'undefined' ||
   (typeof props.shouldAnimate === 'function'
@@ -30,7 +33,6 @@ class FlipContainer extends Component {
   getChildContext() {
     return {
       flip: {
-        defer: () => this.props.defer,
         status: () => this.state.status,
         registerElement: this.registerElement
       }
@@ -43,6 +45,16 @@ class FlipContainer extends Component {
     const defer = typeof options === 'function'
       ? options().defer
       : options.defer;
+
+    if (
+      process.env.NODE_ENV === 'development' &&
+      defer &&
+      this.props.defer === false
+    ) {
+      console.warn(
+        'ReactFlipContainer is not in defer mode while the ReactFlipElement is. This most likely will run unexpected behaviors. Make sure to update your container with the `defer` prop.'
+      );
+    }
 
     return this.flip.addElement(flip, defer);
   }
@@ -104,9 +116,7 @@ class FlipContainer extends Component {
 
   first({ deferred } = {}) {
     if (process.env.NODE_ENV === 'development' && this.props.debug) {
-      const type = deferred === undefined
-        ? ''
-        : deferred ? '(deferred)' : '(normal)';
+      const type = getDeferType(deferred);
       console.groupCollapsed(`ReactFlip: First ${type}`);
     }
     this.flip.first({ deferred });
@@ -117,9 +127,7 @@ class FlipContainer extends Component {
 
   last({ deferred } = {}) {
     if (process.env.NODE_ENV === 'development' && this.props.debug) {
-      const type = deferred === undefined
-        ? ''
-        : deferred ? '(deferred)' : '(normal)';
+      const type = getDeferType(deferred);
       console.groupCollapsed(`ReactFlip: Last ${type}`);
     }
     this.flip.last({ deferred });
@@ -130,9 +138,7 @@ class FlipContainer extends Component {
 
   invert({ deferred } = {}) {
     if (process.env.NODE_ENV === 'development' && this.props.debug) {
-      const type = deferred === undefined
-        ? ''
-        : deferred ? '(deferred)' : '(normal)';
+      const type = getDeferType(deferred);
       console.groupCollapsed(`ReactFlip: Invert ${type}`);
     }
     const result = this.flip.invert({ deferred });
