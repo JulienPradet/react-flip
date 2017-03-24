@@ -15,7 +15,7 @@ export const STATIC = 'ReactFlip_static';
 export const BEFORE_ANIMATION = 'ReactFlip_before';
 export const ANIMATION = 'ReactFlip_animation';
 
-class FlipContainer extends Component {
+class ReactFlipContainer extends Component {
   constructor(props) {
     super();
     this.state = {
@@ -186,20 +186,20 @@ class FlipContainer extends Component {
   }
 }
 
-FlipContainer.propTypes = {
+ReactFlipContainer.propTypes = {
   defer: PropTypes.bool,
   children: PropTypes.func.isRequired
 };
 
-FlipContainer.defaultProps = {
+ReactFlipContainer.defaultProps = {
   defer: false
 };
 
-FlipContainer.childContextTypes = {
+ReactFlipContainer.childContextTypes = {
   flip: PropTypes.shape({
     status: PropTypes.func.isRequired,
     registerElement: PropTypes.func.isRequired
   }).isRequired
 };
 
-export default FlipContainer;
+export default ReactFlipContainer;

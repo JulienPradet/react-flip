@@ -4,12 +4,12 @@ exports[`ReactFlipContainer Should animate if shouldAnimate is a function that r
 <Wrapper
   shouldAnimate={[Function]}
 >
-  <FlipContainer
+  <ReactFlipContainer
     defer={false}
     shouldAnimate={[Function]}
   >
     <div>
-      <FlipElement
+      <ReactFlipElement
         opened={true}
       >
         <Component
@@ -25,9 +25,9 @@ exports[`ReactFlipContainer Should animate if shouldAnimate is a function that r
             Element
           </div>
         </Component>
-      </FlipElement>
+      </ReactFlipElement>
     </div>
-  </FlipContainer>
+  </ReactFlipContainer>
 </Wrapper>
 `;
 
@@ -35,12 +35,12 @@ exports[`ReactFlipContainer Should animate if shouldAnimate is true 1`] = `
 <Wrapper
   shouldAnimate={true}
 >
-  <FlipContainer
+  <ReactFlipContainer
     defer={false}
     shouldAnimate={true}
   >
     <div>
-      <FlipElement
+      <ReactFlipElement
         opened={true}
       >
         <Component
@@ -56,9 +56,9 @@ exports[`ReactFlipContainer Should animate if shouldAnimate is true 1`] = `
             Element
           </div>
         </Component>
-      </FlipElement>
+      </ReactFlipElement>
     </div>
-  </FlipContainer>
+  </ReactFlipContainer>
 </Wrapper>
 `;
 
@@ -66,12 +66,12 @@ exports[`ReactFlipContainer Should not animate if shouldAnimate is a function th
 <Wrapper
   shouldAnimate={[Function]}
 >
-  <FlipContainer
+  <ReactFlipContainer
     defer={false}
     shouldAnimate={[Function]}
   >
     <div>
-      <FlipElement
+      <ReactFlipElement
         opened={true}
       >
         <Component
@@ -87,9 +87,9 @@ exports[`ReactFlipContainer Should not animate if shouldAnimate is a function th
             Element
           </div>
         </Component>
-      </FlipElement>
+      </ReactFlipElement>
     </div>
-  </FlipContainer>
+  </ReactFlipContainer>
 </Wrapper>
 `;
 
@@ -97,12 +97,12 @@ exports[`ReactFlipContainer Should not animate if shouldAnimate is false 1`] = `
 <Wrapper
   shouldAnimate={false}
 >
-  <FlipContainer
+  <ReactFlipContainer
     defer={false}
     shouldAnimate={false}
   >
     <div>
-      <FlipElement
+      <ReactFlipElement
         opened={true}
       >
         <Component
@@ -118,19 +118,19 @@ exports[`ReactFlipContainer Should not animate if shouldAnimate is false 1`] = `
             Element
           </div>
         </Component>
-      </FlipElement>
+      </ReactFlipElement>
     </div>
-  </FlipContainer>
+  </ReactFlipContainer>
 </Wrapper>
 `;
 
 exports[`ReactFlipContainer Should render as animating if play returned a promise 1`] = `
 <Wrapper>
-  <FlipContainer
+  <ReactFlipContainer
     defer={false}
   >
     <div>
-      <FlipElement
+      <ReactFlipElement
         opened={true}
       >
         <Component
@@ -146,19 +146,19 @@ exports[`ReactFlipContainer Should render as animating if play returned a promis
             Element
           </div>
         </Component>
-      </FlipElement>
+      </ReactFlipElement>
     </div>
-  </FlipContainer>
+  </ReactFlipContainer>
 </Wrapper>
 `;
 
 exports[`ReactFlipContainer Should render back as static if the play promise was resolved 1`] = `
 <Wrapper>
-  <FlipContainer
+  <ReactFlipContainer
     defer={false}
   >
     <div>
-      <FlipElement
+      <ReactFlipElement
         opened={true}
       >
         <Component
@@ -174,9 +174,9 @@ exports[`ReactFlipContainer Should render back as static if the play promise was
             Element
           </div>
         </Component>
-      </FlipElement>
+      </ReactFlipElement>
     </div>
-  </FlipContainer>
+  </ReactFlipContainer>
 </Wrapper>
 `;
 

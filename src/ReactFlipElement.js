@@ -1,12 +1,12 @@
-import React, { Component, PropTypes } from 'react';
-import { BEFORE_ANIMATION } from './ReactFlipContainer';
+import React, { Component } from 'react';
+import ReactFlipContainer, { BEFORE_ANIMATION } from './ReactFlipContainer';
 
-const flipElement = (options = {}) =>
+const ReactFlipElement = (options = {}) =>
   BaseComponent => {
     const getOptions = props =>
       typeof options === 'function' ? () => options(props) : options;
 
-    class FlipElement extends Component {
+    class ReactFlipElement extends Component {
       constructor() {
         super();
         this.setFlipElement = this.setFlipElement.bind(this);
@@ -57,14 +57,9 @@ const flipElement = (options = {}) =>
       }
     }
 
-    FlipElement.contextTypes = {
-      flip: PropTypes.shape({
-        status: PropTypes.func.isRequired,
-        registerElement: PropTypes.func.isRequired
-      }).isRequired
-    };
+    ReactFlipElement.contextTypes = ReactFlipContainer.childContextTypes;
 
-    return FlipElement;
+    return ReactFlipElement;
   };
 
-export default flipElement;
+export default ReactFlipElement;

@@ -2,20 +2,20 @@ import Flip from './Flip';
 
 const getElementKey = defer => defer ? 'elementsDeferred' : 'elements';
 
-const getConcernedElements = (defer, elements, deferredElements) => {
-  if (defer === undefined) {
-    return elements.concat(deferredElements);
-  } else if (defer) {
-    return deferredElements;
-  } else {
-    return elements;
-  }
-};
-
 class FlipGroup {
   constructor() {
     this.elements = [];
     this.elementsDeferred = [];
+  }
+
+  getConcernedElements(defer) {
+    if (defer === undefined) {
+      return this.elements.concat(this.elementsDeferred);
+    } else if (defer) {
+      return this.elementsDeferred;
+    } else {
+      return this.elements;
+    }
   }
 
   addElement(element, defer) {
@@ -32,30 +32,21 @@ class FlipGroup {
   }
 
   first({ deferred } = {}) {
-    getConcernedElements(
-      deferred,
-      this.elements,
-      this.elementsDeferred
-    ).forEach(element => element.first());
+    this.getConcernedElements(deferred).forEach(element => element.first());
   }
 
   last({ deferred } = {}) {
-    getConcernedElements(
-      deferred,
-      this.elements,
-      this.elementsDeferred
-    ).forEach(element => element.last());
+    this.getConcernedElements(deferred).forEach(element => element.last());
   }
 
   invert({ deferred } = {}) {
-    return getConcernedElements(deferred, this.elements, this.elementsDeferred)
+    return this.getConcernedElements(deferred)
       .map(element => element.invert())
       .some(hasInverted => hasInverted);
   }
 
   play() {
-    const playPromises = this.elements
-      .concat(this.elementsDeferred)
+    const playPromises = this.getConcernedElements()
       .map(element => element.play())
       .filter(promise => promise);
 
