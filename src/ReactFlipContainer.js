@@ -37,8 +37,13 @@ class FlipContainer extends Component {
     };
   }
 
-  registerElement({ element, options, defer }) {
+  registerElement({ element, options }) {
     const flip = new Flip({ element, options, debug: this.props.debug });
+
+    const defer = typeof options === 'function'
+      ? options().defer
+      : options.defer;
+
     return this.flip.addElement(flip, defer);
   }
 

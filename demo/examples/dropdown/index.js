@@ -20,7 +20,9 @@ const TogglableFlipElement = (options = {}) =>
       ...statusToStyleCreator[status](props, options)
     });
 
-    const FlipBaseComponent = ReactFlipElement(options)(BaseComponent);
+    const FlipBaseComponent = ReactFlipElement({ ...options, defer: true })(
+      BaseComponent
+    );
 
     class TogglableFlipElement extends Component {
       render() {
@@ -29,7 +31,6 @@ const TogglableFlipElement = (options = {}) =>
           return (
             <FlipBaseComponent
               {...props}
-              defer
               style={makeStyle(props, flip.status())}
             />
           );
