@@ -1,4 +1,4 @@
-import { Component, PropTypes } from 'react';
+import { Children, Component, PropTypes } from 'react';
 import FlipGroup from './FlipGroup';
 import Flip from './Flip';
 
@@ -182,13 +182,13 @@ class ReactFlipContainer extends Component {
   }
 
   render() {
-    return this.props.children();
+    return Children.only(this.props.children);
   }
 }
 
 ReactFlipContainer.propTypes = {
   defer: PropTypes.bool,
-  children: PropTypes.func.isRequired
+  children: PropTypes.node.isRequired
 };
 
 ReactFlipContainer.defaultProps = {

@@ -41,11 +41,9 @@ class Wrapper extends Component {
         shouldAnimate={this.props.shouldAnimate}
         {...this.props}
       >
-        {() => (
-          <div>
-            <RenderedElement opened={this.state.opened} />
-          </div>
-        )}
+        <div>
+          <RenderedElement opened={this.state.opened} />
+        </div>
       </ReactFlipContainer>
     );
   }
@@ -59,11 +57,9 @@ describe('ReactFlipContainer', () => {
   test('The container should render its children', () => {
     const tree = shallow(
       <ReactFlipContainer>
-        {() => (
-          <div>
-            Content
-          </div>
-        )}
+        <div>
+          Content
+        </div>
       </ReactFlipContainer>
     );
     expect(toJson(tree)).toMatchSnapshot();
@@ -78,11 +74,9 @@ describe('ReactFlipContainer', () => {
 
     const tree = mount(
       <ReactFlipContainer>
-        {() => (
-          <div>
-            <Element />
-          </div>
-        )}
+        <div>
+          <Element />
+        </div>
       </ReactFlipContainer>
     );
 
@@ -92,11 +86,9 @@ describe('ReactFlipContainer', () => {
   test('Should not register children if the ref is not defined', () => {
     const tree = mount(
       <ReactFlipContainer>
-        {() => (
-          <div>
-            <ReflessElement />
-          </div>
-        )}
+        <div>
+          <ReflessElement />
+        </div>
       </ReactFlipContainer>
     );
 
@@ -227,11 +219,9 @@ describe('ReactFlipContainer', () => {
       render() {
         return (
           <ReactFlipContainer>
-            {() => (
-              <div>
-                {this.state.opened && <Element />}
-              </div>
-            )}
+            <div>
+              {this.state.opened && <Element />}
+            </div>
           </ReactFlipContainer>
         );
       }
@@ -254,11 +244,9 @@ describe('ReactFlipContainer', () => {
 
     const Wrapper = () => (
       <ReactFlipContainer>
-        {() => (
-          <div>
-            <Element props="test" />
-          </div>
-        )}
+        <div>
+          <Element props="test" />
+        </div>
       </ReactFlipContainer>
     );
 

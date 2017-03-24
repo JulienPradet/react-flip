@@ -51,14 +51,12 @@ class Dropdown extends Component {
   render() {
     return (
       <ReactFlipContainer defer debug>
-        {() => (
-          <div>
-            <button onClick={this.toggle}>
-              {this.state.opened ? 'Close' : 'Open'}
-            </button>
-            <Content show={this.state.opened} />
-          </div>
-        )}
+        <div>
+          <button onClick={this.toggle}>
+            {this.state.opened ? 'Close' : 'Open'}
+          </button>
+          <Content show={this.state.opened} />
+        </div>
       </ReactFlipContainer>
     );
   }

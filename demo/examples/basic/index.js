@@ -34,13 +34,11 @@ class Basic extends Component {
       <div>
         Basics
         <ReactFlipContainer debug>
-          {() => (
-            <div>
-              <button onClick={this.increment}>Bigger!</button>
-              <button onClick={this.decrement}>Smaller!</button>
-              <Element height={this.state.height} />
-            </div>
-          )}
+          <div>
+            <button onClick={this.increment}>Bigger!</button>
+            <button onClick={this.decrement}>Smaller!</button>
+            <Element height={this.state.height} />
+          </div>
         </ReactFlipContainer>
       </div>
     );
