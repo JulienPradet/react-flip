@@ -51,8 +51,10 @@ class ReactFlipContainer extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (shouldAnimate(nextProps) && this.props !== nextProps) {
-      if (nextProps.defer) {
-        this.first({ deferred: false });
+      if (nextProps.defer || nextProps.forceDefer) {
+        if (!nextProps.forceDefer) {
+          this.first({ deferred: false });
+        }
         this.setState({
           animating: false,
           preparingAnimation: true,
@@ -72,13 +74,17 @@ class ReactFlipContainer extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (shouldAnimate(this.props)) {
       if (this.props !== prevProps) {
-        if (this.props.defer) {
-          // Set correct position of the undeferred elements
-          this.last({ deferred: false });
-          this.invert({ deferred: false });
+        if (this.props.defer || this.props.forceDefer) {
+          if (!this.props.forceDefer) {
+            // Set correct position of the undeferred elements
+            this.last({ deferred: false });
+            this.invert({ deferred: false });
 
-          // Set initial position of the deferred elements
-          this.first({ deferred: true });
+            // Set initial position of the deferred elements
+            this.first({ deferred: true });
+          } else {
+            this.first();
+          }
 
           // The animation will now begin on next update
           this.setState({
@@ -178,11 +184,13 @@ class ReactFlipContainer extends Component {
 
 ReactFlipContainer.propTypes = {
   defer: PropTypes.bool,
+  forceDefer: PropTypes.bool,
   children: PropTypes.node.isRequired
 };
 
 ReactFlipContainer.defaultProps = {
-  defer: false
+  defer: false,
+  forceDefer: false
 };
 
 ReactFlipContainer.childContextTypes = {

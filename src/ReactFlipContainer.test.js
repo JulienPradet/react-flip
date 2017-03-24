@@ -276,6 +276,25 @@ describe('ReactFlipContainer', () => {
     });
   });
 
+  test('Should defer all elements when forceDefer option is used', () => {
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+
+    const tree = mount(<Wrapper forceDefer />);
+    tree.instance().toggle();
+
+    expect({
+      first: FlipGroup.prototype.first.mock.calls,
+      last: FlipGroup.prototype.last.mock.calls,
+      invert: FlipGroup.prototype.invert.mock.calls,
+      play: FlipGroup.prototype.play.mock.calls
+    }).toEqual({
+      first: [[{ deferred: undefined }]],
+      last: [[{ deferred: undefined }]],
+      invert: [[{ deferred: undefined }]],
+      play: [[]]
+    });
+  });
+
   test('Should render back as static even with deferred elements', () => {
     let externalResolve;
     let removeMock = jest.fn();
@@ -356,5 +375,29 @@ describe('ReactFlipContainer', () => {
     );
     tree.unmount();
     expect(FlipGroup.prototype.addElement.mock.calls.length).toBe(0);
+  });
+
+  test('Should accept options in their function form and the resulting defer should be a function too', () => {
+    let externalResolve;
+
+    let optionMock = jest.fn();
+    optionMock.mockImplementation(() => ({
+      defer: true
+    }));
+
+    FlipGroup.prototype.addElement.mockImplementation((element, defer) => {
+      expect(defer()).toBe(true);
+    });
+
+    const DeferredElement = ReactFlipElement(optionMock)(props => {
+      return (
+        <div ref={props.flip.setFlipElement}>
+          Element
+        </div>
+      );
+    });
+
+    const tree = mount(<Wrapper defer Element={DeferredElement} />);
+    tree.instance().toggle();
   });
 });

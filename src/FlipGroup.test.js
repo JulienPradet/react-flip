@@ -26,6 +26,13 @@ describe('FlipGroup', () => {
     expect(group.elements.length).toBe(0);
   });
 
+  test('It should be possible to add a deferred Flip element using a function', () => {
+    const element = new Flip();
+    const group = new FlipGroup();
+    const remove = group.addElement(element, () => true);
+    expect(group.getConcernedElements(true).length).toBe(1);
+  });
+
   test('It should be possible to add a deferred Flip element', () => {
     const element = new Flip();
     const group = new FlipGroup();
