@@ -1,21 +1,34 @@
-import React from 'react';
+import React, { Component } from 'react';
+import ReactFlipContainer, { BEFORE_ANIMATION } from './ReactFlipContainer';
 
-const flipElement = options =>
+const ReactFlipElement = (options = {}) =>
   BaseComponent => {
-    class FlipElement extends React.Component {
+    const getOptions = props =>
+      typeof options === 'function' ? () => options(props) : options;
+
+    class ReactFlipElement extends Component {
       constructor() {
         super();
         this.setFlipElement = this.setFlipElement.bind(this);
         this.updateTarget = this.updateTarget.bind(this);
-        this.state = { animating: false };
       }
 
       componentDidMount() {
         this.removeTarget = this.updateTarget();
       }
 
+      componentDidUpdate() {
+        if (
+          this.context.flip.status() === BEFORE_ANIMATION &&
+          getOptions(this.props).defer
+        ) {
+          if (this.removeTarget) this.removeTarget();
+          this.removeTarget = this.updateTarget();
+        }
+      }
+
       componentWillUnmount() {
-        this.removeTarget();
+        if (this.removeTarget) this.removeTarget();
       }
 
       setFlipElement(element) {
@@ -25,30 +38,28 @@ const flipElement = options =>
       updateTarget() {
         if (!this.element) return;
 
-        return this.context.flip.registerElement(
-          this.element,
-          typeof options === 'function' ? () => options(this.props) : options
-        );
+        return this.context.flip.registerElement({
+          element: this.element,
+          options: getOptions(this.props)
+        });
       }
 
       render() {
         return (
           <BaseComponent
-            flip={{ setFlipElement: this.setFlipElement }}
-            animating={this.state.animating}
+            flip={{
+              setFlipElement: this.setFlipElement,
+              status: this.context.flip.status()
+            }}
             {...this.props}
           />
         );
       }
     }
 
-    FlipElement.contextTypes = {
-      flip: React.PropTypes.shape({
-        registerElement: React.PropTypes.func.isRequired
-      }).isRequired
-    };
+    ReactFlipElement.contextTypes = ReactFlipContainer.childContextTypes;
 
-    return FlipElement;
+    return ReactFlipElement;
   };
 
-export default flipElement;
+export default ReactFlipElement;

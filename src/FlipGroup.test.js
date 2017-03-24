@@ -26,12 +26,49 @@ describe('FlipGroup', () => {
     expect(group.elements.length).toBe(0);
   });
 
+  test('It should be possible to add a deferred Flip element', () => {
+    const element = new Flip();
+    const group = new FlipGroup();
+    const remove = group.addElement(element, true);
+    expect(group.elementsDeferred.length).toBe(1);
+  });
+
+  test('It should be possible to remove a deferred Flip element', () => {
+    const element = new Flip();
+    const group = new FlipGroup();
+    const remove = group.addElement(element, true);
+    remove();
+    expect(group.elementsDeferred.length).toBe(0);
+  });
+
   test('First method on a group should call it on children', () => {
     const element = new Flip();
     const group = new FlipGroup();
     group.addElement(element);
     group.first();
     expect(element.first.mock.calls.length).toBe(1);
+  });
+
+  test('First method on a group should only call the deferred elements if deferred option is true', () => {
+    const element = new Flip();
+    const deferredElement = new Flip();
+    const group = new FlipGroup();
+    group.addElement(element);
+    group.addElement(deferredElement, true);
+    group.first({ deferred: true });
+    expect(element.first.mock.calls.length).toBe(0);
+    expect(deferredElement.first.mock.calls.length).toBe(1);
+  });
+
+  test('First method on a group should only call the non deferred elements if deferred option is false', () => {
+    const element = new Flip();
+    const deferredElement = new Flip();
+    const group = new FlipGroup();
+    group.addElement(element);
+    group.addElement(deferredElement, true);
+    group.first({ deferred: false });
+    expect(element.first.mock.calls.length).toBe(1);
+    expect(deferredElement.first.mock.calls.length).toBe(0);
   });
 
   test('Last method on a group should call it on children', () => {
@@ -42,6 +79,28 @@ describe('FlipGroup', () => {
     expect(element.last.mock.calls.length).toBe(1);
   });
 
+  test('Last method on a group should only call the deferred elements if deferred option is true', () => {
+    const element = new Flip();
+    const deferredElement = new Flip();
+    const group = new FlipGroup();
+    group.addElement(element);
+    group.addElement(deferredElement, true);
+    group.last({ deferred: true });
+    expect(element.last.mock.calls.length).toBe(0);
+    expect(deferredElement.last.mock.calls.length).toBe(1);
+  });
+
+  test('Last method on a group should only call the non deferred elements if deferred option is false', () => {
+    const element = new Flip();
+    const deferredElement = new Flip();
+    const group = new FlipGroup();
+    group.addElement(element);
+    group.addElement(deferredElement, true);
+    group.last({ deferred: false });
+    expect(element.last.mock.calls.length).toBe(1);
+    expect(deferredElement.last.mock.calls.length).toBe(0);
+  });
+
   test('Invert method on a group should call it on children', () => {
     const element = new Flip();
     const group = new FlipGroup();
@@ -50,6 +109,19 @@ describe('FlipGroup', () => {
     group.last();
     group.invert();
     expect(element.invert.mock.calls.length).toBe(1);
+  });
+
+  test('Invert method on a group should call it on children', () => {
+    const element = new Flip();
+    const deferredElement = new Flip();
+    const group = new FlipGroup();
+    group.addElement(element);
+    group.addElement(deferredElement, true);
+    group.first();
+    group.last();
+    group.invert({ deferred: false });
+    expect(element.invert.mock.calls.length).toBe(1);
+    expect(deferredElement.invert.mock.calls.length).toBe(0);
   });
 
   test('Invert method should return a falsy value if each invert returns a falsy value', () => {

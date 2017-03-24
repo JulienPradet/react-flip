@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { mount, shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
-import ReactFlipContainer from './ReactFlipContainer';
+import ReactFlipContainer, { STATIC } from './ReactFlipContainer';
 import ReactFlipElement from './ReactFlipElement';
 import FlipGroup from './FlipGroup';
 
@@ -19,22 +19,31 @@ const Element = ReactFlipElement()(props => (
   </div>
 ));
 
+const DeferredElement = ReactFlipElement({ defer: true })(props => (
+  <div ref={props.flip.setFlipElement}>
+    Element
+  </div>
+));
+
 class Wrapper extends Component {
-  constructor() {
+  constructor(props) {
     super();
-    this.state = { opened: false };
+    this.state = { opened: props.initiallyOpened || false };
     this.toggle = this.toggle.bind(this);
   }
   toggle() {
     this.setState(state => ({ opened: !state.opened }));
   }
   render() {
+    const RenderedElement = this.props.Element || Element;
     return (
-      <ReactFlipContainer shouldAnimate={this.props.shouldAnimate}>
-        {({ animating }) => (
+      <ReactFlipContainer
+        shouldAnimate={this.props.shouldAnimate}
+        {...this.props}
+      >
+        {() => (
           <div>
-            {animating ? 'Animated' : 'Static'}
-            <Element />
+            <RenderedElement opened={this.state.opened} />
           </div>
         )}
       </ReactFlipContainer>
@@ -50,9 +59,8 @@ describe('ReactFlipContainer', () => {
   test('The container should render its children', () => {
     const tree = shallow(
       <ReactFlipContainer>
-        {({ animating }) => (
+        {() => (
           <div>
-            {animating ? 'Animated' : 'Static'}
             Content
           </div>
         )}
@@ -70,9 +78,8 @@ describe('ReactFlipContainer', () => {
 
     const tree = mount(
       <ReactFlipContainer>
-        {({ animating }) => (
+        {() => (
           <div>
-            {animating ? 'Animated' : 'Static'}
             <Element />
           </div>
         )}
@@ -85,9 +92,8 @@ describe('ReactFlipContainer', () => {
   test('Should not register children if the ref is not defined', () => {
     const tree = mount(
       <ReactFlipContainer>
-        {({ animating }) => (
+        {() => (
           <div>
-            {animating ? 'Animated' : 'Static'}
             <ReflessElement />
           </div>
         )}
@@ -221,7 +227,7 @@ describe('ReactFlipContainer', () => {
       render() {
         return (
           <ReactFlipContainer>
-            {({ animating }) => (
+            {() => (
               <div>
                 {this.state.opened && <Element />}
               </div>
@@ -248,9 +254,8 @@ describe('ReactFlipContainer', () => {
 
     const Wrapper = () => (
       <ReactFlipContainer>
-        {({ animating }) => (
+        {() => (
           <div>
-            {animating ? 'Animated' : 'Static'}
             <Element props="test" />
           </div>
         )}
@@ -262,5 +267,106 @@ describe('ReactFlipContainer', () => {
     expect(
       typeof FlipGroup.prototype.addElement.mock.calls[0][0].optionCreator
     ).toBe('function');
+  });
+
+  test('Should FLI the non deferred elements first and then update the deferred ones', () => {
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+
+    const tree = mount(<Wrapper defer />);
+    tree.instance().toggle();
+
+    expect({
+      first: FlipGroup.prototype.first.mock.calls,
+      last: FlipGroup.prototype.last.mock.calls,
+      invert: FlipGroup.prototype.invert.mock.calls,
+      play: FlipGroup.prototype.play.mock.calls
+    }).toEqual({
+      first: [[{ deferred: false }], [{ deferred: true }]],
+      last: [[{ deferred: false }], [{ deferred: undefined }]],
+      invert: [[{ deferred: false }], [{ deferred: undefined }]],
+      play: [[]]
+    });
+  });
+
+  test('Should render back as static even with deferred elements', () => {
+    let externalResolve;
+    let removeMock = jest.fn();
+    FlipGroup.prototype.addElement.mockImplementation(() => removeMock);
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+    FlipGroup.prototype.play.mockImplementation(
+      () => new Promise(resolve => externalResolve = resolve)
+    );
+
+    const tree = mount(<Wrapper defer Element={DeferredElement} />);
+    tree.instance().toggle();
+
+    expect({
+      addElement: FlipGroup.prototype.addElement.mock.calls.length,
+      removeElement: removeMock.mock.calls.length
+    }).toEqual({
+      addElement: 2,
+      removeElement: 1
+    });
+  });
+
+  test('Should add Element on update even if it was not there at first', () => {
+    let externalResolve;
+    let removeMock = jest.fn();
+    FlipGroup.prototype.addElement.mockImplementation(() => removeMock);
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+    FlipGroup.prototype.play.mockImplementation(
+      () => new Promise(resolve => externalResolve = resolve)
+    );
+
+    const DeferredElement = ReactFlipElement({ defer: true })(props => {
+      if (!props.opened && props.flip.status === STATIC) {
+        return null;
+      }
+
+      return (
+        <div ref={props.flip.setFlipElement}>
+          Element
+        </div>
+      );
+    });
+
+    const tree = mount(<Wrapper defer Element={DeferredElement} />);
+    tree.instance().toggle();
+
+    expect({
+      addElement: FlipGroup.prototype.addElement.mock.calls.length,
+      removeElement: removeMock.mock.calls.length
+    }).toEqual({
+      addElement: 1,
+      removeElement: 0
+    });
+  });
+
+  test('Should not crash when removing an Element that was not registered in the first place', () => {
+    let externalResolve;
+    let removeMock = jest.fn();
+    FlipGroup.prototype.addElement.mockImplementation(() => removeMock);
+    FlipGroup.prototype.invert.mockImplementation(() => true);
+    FlipGroup.prototype.play.mockImplementation(
+      () => new Promise(resolve => externalResolve = resolve)
+    );
+
+    const DeferredElement = ReactFlipElement({ defer: true })(props => {
+      if (!props.opened && props.flip.status === STATIC) {
+        return null;
+      }
+
+      return (
+        <div ref={props.flip.setFlipElement}>
+          Element
+        </div>
+      );
+    });
+
+    const tree = mount(
+      <Wrapper defer initiallyOpened={false} Element={DeferredElement} />
+    );
+    tree.unmount();
+    expect(FlipGroup.prototype.addElement.mock.calls.length).toBe(0);
   });
 });
