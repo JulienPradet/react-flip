@@ -71,7 +71,14 @@ class FlipContainer extends Component {
     if (shouldAnimate(this.props)) {
       if (this.props !== prevProps) {
         if (this.props.defer) {
+          // Set correct position of the undeferred elements
+          this.last({ deferred: false });
+          this.invert({ deferred: false });
+
+          // Set initial position of the deferred elements
           this.first({ deferred: true });
+
+          // The animation will now begin on next update
           this.setState({
             animating: true,
             preparingAnimation: false,
@@ -95,11 +102,12 @@ class FlipContainer extends Component {
     }
   }
 
-  first({ deferred } = { deferred: false }) {
+  first({ deferred } = {}) {
     if (process.env.NODE_ENV === 'development' && this.props.debug) {
-      console.groupCollapsed(
-        `ReactFlip: First ${deferred ? '(deferred)' : '(normal)'}`
-      );
+      const type = deferred === undefined
+        ? ''
+        : deferred ? '(deferred)' : '(normal)';
+      console.groupCollapsed(`ReactFlip: First ${type}`);
     }
     this.flip.first({ deferred });
     if (process.env.NODE_ENV === 'development' && this.props.debug) {
@@ -107,21 +115,27 @@ class FlipContainer extends Component {
     }
   }
 
-  last() {
+  last({ deferred } = {}) {
     if (process.env.NODE_ENV === 'development' && this.props.debug) {
-      console.groupCollapsed('ReactFlip: Last');
+      const type = deferred === undefined
+        ? ''
+        : deferred ? '(deferred)' : '(normal)';
+      console.groupCollapsed(`ReactFlip: Last ${type}`);
     }
-    this.flip.last();
+    this.flip.last({ deferred });
     if (process.env.NODE_ENV === 'development' && this.props.debug) {
       console.groupEnd();
     }
   }
 
-  invert() {
+  invert({ deferred } = {}) {
     if (process.env.NODE_ENV === 'development' && this.props.debug) {
-      console.groupCollapsed('ReactFlip: Invert');
+      const type = deferred === undefined
+        ? ''
+        : deferred ? '(deferred)' : '(normal)';
+      console.groupCollapsed(`ReactFlip: Invert ${type}`);
     }
-    const result = this.flip.invert();
+    const result = this.flip.invert({ deferred });
     if (process.env.NODE_ENV === 'development' && this.props.debug) {
       console.groupEnd();
     }

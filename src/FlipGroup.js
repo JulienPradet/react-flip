@@ -2,6 +2,16 @@ import Flip from './Flip';
 
 const getElementKey = defer => defer ? 'elementsDeferred' : 'elements';
 
+const getConcernedElements = (defer, elements, deferredElements) => {
+  if (defer === undefined) {
+    return elements.concat(deferredElements);
+  } else if (defer) {
+    return deferredElements.concat(deferredElements);
+  } else {
+    return elements;
+  }
+};
+
 class FlipGroup {
   constructor() {
     this.elements = [];
@@ -21,18 +31,24 @@ class FlipGroup {
     }
   }
 
-  first({ deferred } = { deferred: false }) {
-    this[getElementKey(deferred)].forEach(element => element.first());
+  first({ deferred } = {}) {
+    getConcernedElements(
+      deferred,
+      this.elements,
+      this.elementsDeferred
+    ).forEach(element => element.first());
   }
 
-  last() {
-    this.elements.forEach(element => element.last());
-    this.elementsDeferred.forEach(element => element.last());
+  last({ deferred } = {}) {
+    getConcernedElements(
+      deferred,
+      this.elements,
+      this.elementsDeferred
+    ).forEach(element => element.last());
   }
 
-  invert() {
-    return this.elements
-      .concat(this.elementsDeferred)
+  invert({ deferred } = {}) {
+    return getConcernedElements(deferred, this.elements, this.elementsDeferred)
       .map(element => element.invert())
       .some(hasInverted => hasInverted);
   }
