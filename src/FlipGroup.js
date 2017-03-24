@@ -1,6 +1,7 @@
 import Flip from './Flip';
 
-const getElementKey = defer => defer ? 'elementsDeferred' : 'elements';
+const not = fn => x => !fn(x);
+const isDeferred = element => element.defer;
 
 class FlipGroup {
   constructor() {
@@ -10,44 +11,45 @@ class FlipGroup {
 
   getConcernedElements(defer) {
     if (defer === undefined) {
-      return this.elements.concat(this.elementsDeferred);
-    } else if (defer) {
-      return this.elementsDeferred;
-    } else {
       return this.elements;
+    } else if (defer) {
+      return this.elements.filter(isDeferred);
+    } else {
+      return this.elements.filter(not(isDeferred));
     }
   }
 
   addElement(element, defer) {
     if (element instanceof Flip) {
-      const elementKey = getElementKey(defer);
-      this[elementKey] = [...this[elementKey], element];
+      this.elements = [...this.elements, { element, defer }];
 
       return () => {
-        this[elementKey] = this[elementKey].filter(
-          current => current !== element
+        this.elements = this.elements.filter(
+          current => current.element !== element
         );
       };
     }
   }
 
   first({ deferred } = {}) {
-    this.getConcernedElements(deferred).forEach(element => element.first());
+    this.getConcernedElements(deferred).forEach(({ element }) =>
+      element.first());
   }
 
   last({ deferred } = {}) {
-    this.getConcernedElements(deferred).forEach(element => element.last());
+    this.getConcernedElements(deferred).forEach(({ element }) =>
+      element.last());
   }
 
   invert({ deferred } = {}) {
     return this.getConcernedElements(deferred)
-      .map(element => element.invert())
+      .map(({ element }) => element.invert())
       .some(hasInverted => hasInverted);
   }
 
   play() {
     const playPromises = this.getConcernedElements()
-      .map(element => element.play())
+      .map(({ element }) => element.play())
       .filter(promise => promise);
 
     if (playPromises.length === 0) {
