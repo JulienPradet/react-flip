@@ -17,6 +17,7 @@ const Navigation = () => (
   <ul>
     <NavigationLink to="/basic">Basic</NavigationLink>
     <NavigationLink to="/dropdown">Dropdown</NavigationLink>
+    <NavigationLink to="/page-transition">PageTransition</NavigationLink>
   </ul>
 );
 
