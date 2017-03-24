@@ -1,0 +1,39 @@
+main {
+    padding: 1em;
+    max-width: 50em;
+    margin: 0 auto;
+}
+
+button {
+    cursor: pointer;
+    margin: 0.5em;
+    color: $black;
+    background: $white;
+    border: 1px solid $blue;
+    padding: 0.5em 1em;
+    &:hover, &:focus {
+        background: $lightGrey;
+    }
+    &.button-icon {
+        border: none;
+        margin: 0;
+        padding: 0.5em 0 0.5em 0.5em;
+        .icon {
+            display: inline-block;
+            font-size: 1.5em;
+            width: 1.5em;
+            height: 1.5em;
+            margin: 0;
+        }
+    }
+}
+
+.button-sets {
+    text-align: center;
+
+    &--full {
+        position: relative;
+        background: $blue;
+        z-index: 2;
+    }
+}

@@ -107,6 +107,8 @@ class ReactFlipContainer extends Component {
     this.last();
     if (this.invert()) {
       this.play();
+    } else {
+      this.onAnimationEnd();
     }
   }
 
