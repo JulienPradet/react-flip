@@ -4,7 +4,7 @@ import ReactFlipContainer, { BEFORE_ANIMATION } from './ReactFlipContainer';
 const ReactFlipElement = (options = {}) =>
   BaseComponent => {
     const getOptions = props =>
-      typeof options === 'function' ? () => options(props) : options;
+      typeof options === 'function' ? () => options(props()) : options;
 
     class ReactFlipElement extends Component {
       constructor() {
@@ -40,7 +40,7 @@ const ReactFlipElement = (options = {}) =>
 
         return this.context.flip.registerElement({
           element: this.element,
-          options: getOptions(this.props)
+          options: getOptions(() => this.props)
         });
       }
 

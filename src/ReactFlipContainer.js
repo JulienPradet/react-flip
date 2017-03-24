@@ -43,18 +43,8 @@ class ReactFlipContainer extends Component {
     const flip = new Flip({ element, options, debug: this.props.debug });
 
     const defer = typeof options === 'function'
-      ? options().defer
+      ? () => options().defer
       : options.defer;
-
-    if (
-      process.env.NODE_ENV === 'development' &&
-      defer &&
-      this.props.defer === false
-    ) {
-      console.warn(
-        'ReactFlipContainer is not in defer mode while the ReactFlipElement is. This most likely will run unexpected behaviors. Make sure to update your container with the `defer` prop.'
-      );
-    }
 
     return this.flip.addElement(flip, defer);
   }

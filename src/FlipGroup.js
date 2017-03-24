@@ -1,7 +1,8 @@
 import Flip from './Flip';
 
 const not = fn => x => !fn(x);
-const isDeferred = element => element.defer;
+const isDeferred = element =>
+  typeof element.defer === 'function' ? element.defer() : element.defer;
 
 class FlipGroup {
   constructor() {
