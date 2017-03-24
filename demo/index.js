@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import Navigation from './Navigation';
 import Examples from './Examples';
+import './style/index.scss';
 
 class App extends Component {
   render() {
     return (
-      <BrowserRouter>
+      <HashRouter>
         <div>
-          <h1>react-flip</h1>
           <Navigation />
           <Examples />
         </div>
-      </BrowserRouter>
+      </HashRouter>
     );
   }
 }

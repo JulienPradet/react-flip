@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { ReactFlipContainer, ReactFlipElement } from '../../../src/index.js';
+import Code from '../../util/Code.js';
+import rawCode from './index.js?raw';
 
 const Element = ReactFlipElement()(props => (
   <div
@@ -10,6 +12,12 @@ const Element = ReactFlipElement()(props => (
       background: '#00C9C9'
     }}
   />
+));
+
+const CodeView = ReactFlipElement()(props => (
+  <div ref={props.flip.setFlipElement}>
+    <Code>{props.children}</Code>
+  </div>
 ));
 
 class Basic extends Component {
@@ -32,12 +40,14 @@ class Basic extends Component {
   render() {
     return (
       <div>
-        Basics
         <ReactFlipContainer debug>
           <div>
-            <button onClick={this.increment}>Bigger!</button>
-            <button onClick={this.decrement}>Smaller!</button>
+            <div className="button-sets">
+              <button onClick={this.increment}>Bigger!</button>
+              <button onClick={this.decrement}>Smaller!</button>
+            </div>
             <Element height={this.state.height} />
+            <CodeView>{rawCode}</CodeView>
           </div>
         </ReactFlipContainer>
       </div>

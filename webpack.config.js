@@ -5,13 +5,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   devtool: process.env.NODE_ENV === 'production' ? 'source-map' : 'eval',
   entry: {
-    'react-flip': process.env.NODE_ENV === 'production'
-      ? path.resolve(__dirname, 'src/index.js')
-      : path.resolve(__dirname, 'demo/index.js')
+    'react-flip': path.resolve(__dirname, 'demo/index.js')
   },
   output: {
-    // library: 'ReactFlip',
-    // libraryTarget: 'umd',
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
     publicPath: '/'
@@ -36,7 +32,23 @@ module.exports = {
           path.resolve(__dirname, 'src'),
           path.resolve(__dirname, 'demo')
         ],
-        loader: 'babel-loader'
+        oneOf: [
+          {
+            resourceQuery: /\?raw/,
+            loader: 'raw-loader'
+          },
+          {
+            loader: 'babel-loader'
+          }
+        ]
+      },
+      {
+        test: /\.(css|scss)$/,
+        loader: [
+          { loader: 'style-loader' },
+          { loader: 'css-loader' },
+          { loader: 'sass-loader' }
+        ]
       }
     ]
   },

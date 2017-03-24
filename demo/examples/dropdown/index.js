@@ -5,6 +5,8 @@ import ReactFlipContainer, {
   STATIC
 } from '../../../src/ReactFlipContainer';
 import ReactFlipElement from '../../../src/ReactFlipElement';
+import Code from '../../util/Code';
+import rawCode from './index.js?raw';
 
 const statusToStyleCreator = {
   [ANIMATION]: (props, options) => props.show ? {} : options.leaveStyle,
@@ -12,16 +14,18 @@ const statusToStyleCreator = {
   [STATIC]: (props, options) => ({})
 };
 
-const Content = ReactFlipElement({ defer: true })(props => {
+const Content = ReactFlipElement({ defer: true, updateScale: false })(props => {
   if (props.show || props.flip.status !== STATIC) {
     return (
       <div
         ref={props.flip.setFlipElement}
         style={{
-          marginTop: 20,
+          border: '1px solid #00c9c9',
+          padding: '1em',
+          width: '100%',
           ...statusToStyleCreator[props.flip.status](props, {
-            enterStyle: { marginTop: 0, opacity: 0 },
-            leaveStyle: { marginTop: 40, opacity: 0 }
+            enterStyle: { position: 'absolute', top: -40, opacity: 0 },
+            leaveStyle: { position: 'absolute', top: -40, opacity: 0 }
           })
         }}
       >
@@ -32,6 +36,12 @@ const Content = ReactFlipElement({ defer: true })(props => {
     return null;
   }
 });
+
+const CodeView = ReactFlipElement()(props => (
+  <div ref={props.flip.setFlipElement}>
+    <Code>{props.children}</Code>
+  </div>
+));
 
 class Dropdown extends Component {
   constructor() {
@@ -52,10 +62,15 @@ class Dropdown extends Component {
     return (
       <ReactFlipContainer defer debug>
         <div>
-          <button onClick={this.toggle}>
-            {this.state.opened ? 'Close' : 'Open'}
-          </button>
-          <Content show={this.state.opened} />
+          <div className="button-sets button-sets--full">
+            <button onClick={this.toggle}>
+              {this.state.opened ? 'Close' : 'Open'}
+            </button>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <Content show={this.state.opened} />
+          </div>
+          <CodeView>{rawCode}</CodeView>
         </div>
       </ReactFlipContainer>
     );

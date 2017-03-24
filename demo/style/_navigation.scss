@@ -1,0 +1,34 @@
+nav {
+    background: $lightGrey;
+    text-align: center;
+    padding: 1em;
+
+    h1 {
+        color: $blue;
+        margin: 0.5rem;
+    }
+
+    ul {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center; 
+        padding: 0;
+        margin: 0;
+    }
+    .nav-link {
+        display: block;
+        padding: 0;
+        margin: 0.5em 1em;
+        a {
+            text-decoration: none;
+            color: $black;
+            padding: 0.5em;
+        }
+        &:hover, &:focus, &:active, &--active {
+            a {
+                color: $blue;
+            }
+        }
+    }
+}
+
