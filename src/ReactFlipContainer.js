@@ -187,7 +187,7 @@ class FlipContainer extends Component {
 }
 
 FlipContainer.propTypes = {
-  defer: PropTypes.bool.isRequired,
+  defer: PropTypes.bool,
   children: PropTypes.func.isRequired
 };
 
@@ -197,6 +197,7 @@ FlipContainer.defaultProps = {
 
 FlipContainer.childContextTypes = {
   flip: PropTypes.shape({
+    status: PropTypes.func.isRequired,
     registerElement: PropTypes.func.isRequired
   }).isRequired
 };

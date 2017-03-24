@@ -3,7 +3,7 @@ import React, { Component, PropTypes } from 'react';
 const flipElement = (options = {}) =>
   BaseComponent => {
     class FlipElement extends Component {
-      constructor(props, context) {
+      constructor() {
         super();
         this.setFlipElement = this.setFlipElement.bind(this);
         this.updateTarget = this.updateTarget.bind(this);

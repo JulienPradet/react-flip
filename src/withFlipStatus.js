@@ -7,8 +7,7 @@ const withFlipStatus = () =>
         return (
           <BaseComponent
             flip={{
-              status: this.context.flip.status,
-              defer: this.context.flip.defer
+              status: this.context.flip.status
             }}
             {...this.props}
           />
@@ -18,9 +17,7 @@ const withFlipStatus = () =>
 
     FlipElement.contextTypes = {
       flip: PropTypes.shape({
-        status: PropTypes.func.isRequired,
-        defer: PropTypes.func.isRequired,
-        registerElement: PropTypes.func.isRequired
+        status: PropTypes.func.isRequired
       }).isRequired
     };
 
