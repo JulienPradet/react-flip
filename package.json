@@ -39,7 +39,7 @@
   },
   "scripts": {
     "build": "NODE_ENV=production webpack",
-    "start": "NODE_ENV=development webpack-dev-server",
+    "start": "NODE_ENV=development webpack-dev-server --host 0.0.0.0",
     "test": "jest --env=jsdom",
     "test/coverage": "jest --coverage --env=jsdom",
     "test/watch": "jest --watch --coverage --env=jsdom"

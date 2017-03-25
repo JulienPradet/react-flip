@@ -26,7 +26,10 @@ const Navigation = () => (
       <NavigationLink to="/basic">Basic</NavigationLink>
       <NavigationLink to="/dropdown">Dropdown</NavigationLink>
       <NavigationLink to="/list">List</NavigationLink>
-      <NavigationLink to="/page-transition">PageTransition</NavigationLink>
+      <NavigationLink to="/page-transition">Page Transition</NavigationLink>
+      <NavigationLink to="/complex-transition">
+        Complex Transition
+      </NavigationLink>
     </ul>
   </nav>
 );

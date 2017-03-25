@@ -40,7 +40,7 @@ class Basic extends Component {
   render() {
     return (
       <div>
-        <ReactFlipContainer debug>
+        <ReactFlipContainer>
           <div>
             <div className="button-sets">
               <button onClick={this.increment}>Bigger!</button>
