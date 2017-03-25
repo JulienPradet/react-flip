@@ -29,21 +29,21 @@ class Flip {
       this.options = Object.assign({}, defaultOptions, this.optionCreator);
     }
     if (process.env.NODE_ENV === 'development' && this.debug) {
-      console.debug('Options updated', this.options);
+      console.debug('Options updated', this.options.id, this.options);
     }
   }
 
   first() {
     this._first = this.options.getElementStyle(this.element);
     if (process.env.NODE_ENV === 'development' && this.debug) {
-      console.debug(this._first);
+      console.debug(this.options.id, this._first);
     }
   }
 
   last() {
     this._last = this.options.getElementStyle(this.element);
     if (process.env.NODE_ENV === 'development' && this.debug) {
-      console.debug(this._last);
+      console.debug(this.options.id, this._last);
     }
   }
 
@@ -51,6 +51,7 @@ class Flip {
     if (!this._first || !this._last) {
       if (process.env.NODE_ENV === 'development' && this.debug) {
         console.warn(
+          this.options.id,
           'Make sure to call `flip.first()` and `flip.last()` before calling `flip.invert()`'
         );
       }
@@ -87,7 +88,7 @@ class Flip {
       this._invert.opacity === 0
     ) {
       if (process.env.NODE_ENV === 'development' && this.debug) {
-        console.warn('Nothing to animate', this.element);
+        console.warn(this.options.id, 'Nothing to animate', this.element);
       }
       this.resetStyle();
       return;
@@ -98,7 +99,7 @@ class Flip {
     this.element.style.transformOrigin = '0 0';
     this.element.style.willChange = 'transform, opacity';
     if (process.env.NODE_ENV === 'development' && this.debug) {
-      console.debug('Ready to animate');
+      console.debug(this.options.id, 'Ready to animate');
     }
     return true;
   }
@@ -107,6 +108,7 @@ class Flip {
     if (!this._invert) {
       if (process.env.NODE_ENV === 'development' && this.debug) {
         console.warn(
+          this.options.id,
           'Make sure to call `flip.invert()` before calling `flip.play()`'
         );
       }
@@ -122,7 +124,7 @@ class Flip {
     });
 
     if (process.env.NODE_ENV === 'development' && this.debug) {
-      console.debug('Starting animation at', this._start);
+      console.debug(this.options.id, 'Starting animation at', this._start);
     }
     window.requestAnimationFrame(this.animate);
 
@@ -141,9 +143,10 @@ class Flip {
       window.requestAnimationFrame(this.animate);
     } else {
       if (process.env.NODE_ENV === 'development' && this.debug) {
-        console.debug('Ending animation at', end);
-        console.debug('Total duration:', end - this._start);
+        console.debug(this.options.id, 'Ending animation at', end);
+        console.debug(this.options.id, 'Total duration:', end - this._start);
         console.debug(
+          this.options.id,
           'Actual duration:',
           this.options.duration * this.options.durationMultiplier
         );

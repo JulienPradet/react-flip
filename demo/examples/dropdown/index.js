@@ -60,7 +60,7 @@ class Dropdown extends Component {
 
   render() {
     return (
-      <ReactFlipContainer defer debug>
+      <ReactFlipContainer defer>
         <div>
           <div className="button-sets button-sets--full">
             <button onClick={this.toggle}>
