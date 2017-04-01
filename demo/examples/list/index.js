@@ -4,40 +4,40 @@ import ReactFlipContainer, {
   ANIMATION
 } from '../../../src/ReactFlipContainer';
 import ReactFlipElement from '../../../src/ReactFlipElement';
-import Code from '../../util/Code';
-import rawCode from './index.js?raw';
 
 const List = props => <div>{props.children}</div>;
 
-const Item = ReactFlipElement()(props => {
-  let style = {
-    display: 'inline-block',
-    padding: '0.5em'
-  };
-  if (props.flip.status === BEFORE_ANIMATION && props.creating) {
-    style.position = 'absolute';
-    style.opacity = 0;
-    style.marginTop = -10;
-  } else if (props.flip.status === ANIMATION && props.deleting) {
-    style.position = 'absolute';
-    style.opacity = 0;
-    style.marginTop = 10;
-  }
-  return (
-    <div style={style} ref={props.flip.setFlipElement}>
-      <button className="button-icon" title="Delete" onClick={props.onClick}>
-        {props.children}
-        <span className="icon">×</span>
-      </button>
-    </div>
-  );
-});
-
-const CodeView = ReactFlipElement()(props => (
-  <div ref={props.flip.setFlipElement}>
-    <Code>{props.children}</Code>
-  </div>
-));
+const Item = props => (
+  <ReactFlipElement>
+    {({ setFlipElement, status }) => {
+      let style = {
+        display: 'inline-block',
+        padding: '0.5em'
+      };
+      if (status === BEFORE_ANIMATION && props.creating) {
+        style.position = 'absolute';
+        style.opacity = 0;
+        style.marginTop = -10;
+      } else if (status === ANIMATION && props.deleting) {
+        style.position = 'absolute';
+        style.opacity = 0;
+        style.marginTop = 10;
+      }
+      return (
+        <div style={style} ref={setFlipElement}>
+          <button
+            className="button-icon"
+            title="Delete"
+            onClick={props.onClick}
+          >
+            {props.children}
+            <span className="icon">×</span>
+          </button>
+        </div>
+      );
+    }}
+  </ReactFlipElement>
+);
 
 class Dropdown extends Component {
   constructor() {
@@ -146,7 +146,6 @@ class Dropdown extends Component {
                 </Item>
               ))}
             </List>
-            <CodeView>{rawCode}</CodeView>
           </div>
         </ReactFlipContainer>
       </div>

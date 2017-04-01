@@ -5,8 +5,6 @@ import ReactFlipContainer, {
   STATIC
 } from '../../../src/ReactFlipContainer';
 import ReactFlipElement from '../../../src/ReactFlipElement';
-import Code from '../../util/Code';
-import rawCode from './index.js?raw';
 
 const statusToStyleCreator = {
   [ANIMATION]: (props, options) => props.show ? {} : options.leaveStyle,
@@ -14,34 +12,32 @@ const statusToStyleCreator = {
   [STATIC]: (props, options) => ({})
 };
 
-const Content = ReactFlipElement({ defer: true, updateScale: false })(props => {
-  if (props.show || props.flip.status !== STATIC) {
-    return (
-      <div
-        ref={props.flip.setFlipElement}
-        style={{
-          border: '1px solid #00c9c9',
-          padding: '1em',
-          width: '100%',
-          ...statusToStyleCreator[props.flip.status](props, {
-            enterStyle: { position: 'absolute', top: -40, opacity: 0 },
-            leaveStyle: { position: 'absolute', top: -40, opacity: 0 }
-          })
-        }}
-      >
-        Content
-      </div>
-    );
-  } else {
-    return null;
-  }
-});
-
-const CodeView = ReactFlipElement()(props => (
-  <div ref={props.flip.setFlipElement}>
-    <Code>{props.children}</Code>
-  </div>
-));
+const Content = props => (
+  <ReactFlipElement options={{ defer: true, updateScale: false }}>
+    {({ setFlipElement, status }) => {
+      if (props.show || status !== STATIC) {
+        return (
+          <div
+            ref={setFlipElement}
+            style={{
+              border: '1px solid #00c9c9',
+              padding: '1em',
+              width: '100%',
+              ...statusToStyleCreator[status](props, {
+                enterStyle: { position: 'absolute', top: -40, opacity: 0 },
+                leaveStyle: { position: 'absolute', top: -40, opacity: 0 }
+              })
+            }}
+          >
+            Content
+          </div>
+        );
+      } else {
+        return null;
+      }
+    }}
+  </ReactFlipElement>
+);
 
 class Dropdown extends Component {
   constructor() {
@@ -70,7 +66,6 @@ class Dropdown extends Component {
           <div style={{ position: 'relative' }}>
             <Content show={this.state.opened} />
           </div>
-          <CodeView>{rawCode}</CodeView>
         </div>
       </ReactFlipContainer>
     );

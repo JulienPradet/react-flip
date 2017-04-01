@@ -7,31 +7,41 @@ import ReactFlipContainer, {
 } from '../../../src/ReactFlipContainer';
 import { CardShape } from './cards';
 
-const Image = ReactFlipElement(props => ({
-  id: props.card.path + '-image',
-  updateScale: false
-}))(props => (
-  <div
-    className="card__image"
-    ref={props.flip.setFlipElement}
-    style={{
-      backgroundImage: `url(${props.card.image})`,
-      backgroundSize: 'cover'
+const Image = props => (
+  <ReactFlipElement
+    options={{
+      id: props.card.path + '-image',
+      updateScale: false
     }}
-  />
-));
+  >
+    {({ setFlipElement }) => (
+      <div
+        className="card__image"
+        ref={setFlipElement}
+        style={{
+          backgroundImage: `url(${props.card.image})`,
+          backgroundSize: 'cover'
+        }}
+      />
+    )}
+  </ReactFlipElement>
+);
 
-const BackgroundGradient = ReactFlipElement(props => ({
-  id: props.card.path + '-bg-gradient'
-}))(props => (
-  <div className="card__background-gradient" ref={props.flip.setFlipElement} />
-));
+const BackgroundGradient = props => (
+  <ReactFlipElement options={{ id: props.card.path + '-bg-gradient' }}>
+    {({ setFlipElement }) => (
+      <div className="card__background-gradient" ref={setFlipElement} />
+    )}
+  </ReactFlipElement>
+);
 
-const BackgroundSolid = ReactFlipElement(props => ({
-  id: props.card.path + '-bg-solid'
-}))(props => (
-  <div className="card__background-solid" ref={props.flip.setFlipElement} />
-));
+const BackgroundSolid = props => (
+  <ReactFlipElement options={{ id: props.card.path + '-bg-solid' }}>
+    {({ setFlipElement }) => (
+      <div className="card__background-solid" ref={setFlipElement} />
+    )}
+  </ReactFlipElement>
+);
 
 const Background = props => (
   <div>
@@ -40,30 +50,38 @@ const Background = props => (
   </div>
 );
 
-const Title = ReactFlipElement(props => ({
-  id: props.card.path + '-title'
-}))(props => (
-  <div className="card__title" ref={props.flip.setFlipElement}>
-    <h3>
-      <Link to={props.selected ? '/complex-transition' : props.card.path}>
-        {props.card.title}
-      </Link>
-    </h3>
-  </div>
-));
+const Title = props => (
+  <ReactFlipElement options={{ id: props.card.path + '-title' }}>
+    {({ setFlipElement }) => (
+      <div className="card__title" ref={setFlipElement}>
+        <h3>
+          <Link to={props.selected ? '/complex-transition' : props.card.path}>
+            {props.card.title}
+          </Link>
+        </h3>
+      </div>
+    )}
+  </ReactFlipElement>
+);
 
-const Description = ReactFlipElement(props => ({
-  id: props.card.path + '-description',
-  updateScale: false,
-  updateTranslate: false,
-  delay: 200
-}))(props => (
-  <div
-    className="card__content"
-    ref={props.flip.setFlipElement}
-    dangerouslySetInnerHTML={{ __html: props.card.description }}
-  />
-));
+const Description = props => (
+  <ReactFlipElement
+    options={{
+      id: props.card.path + '-description',
+      updateScale: false,
+      updateTranslate: false,
+      delay: 200
+    }}
+  >
+    {({ setFlipElement }) => (
+      <div
+        className="card__content"
+        ref={setFlipElement}
+        dangerouslySetInnerHTML={{ __html: props.card.description }}
+      />
+    )}
+  </ReactFlipElement>
+);
 
 class Card extends Component {
   constructor() {

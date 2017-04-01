@@ -1,24 +1,5 @@
 import React, { Component } from 'react';
 import { ReactFlipContainer, ReactFlipElement } from '../../../src/index.js';
-import Code from '../../util/Code.js';
-import rawCode from './index.js?raw';
-
-const Element = ReactFlipElement()(props => (
-  <div
-    ref={props.flip.setFlipElement}
-    style={{
-      height: props.height * 50,
-      width: '100%',
-      background: '#00C9C9'
-    }}
-  />
-));
-
-const CodeView = ReactFlipElement()(props => (
-  <div ref={props.flip.setFlipElement}>
-    <Code>{props.children}</Code>
-  </div>
-));
 
 class Basic extends Component {
   constructor() {
@@ -46,8 +27,19 @@ class Basic extends Component {
               <button onClick={this.increment}>Bigger!</button>
               <button onClick={this.decrement}>Smaller!</button>
             </div>
-            <Element height={this.state.height} />
-            <CodeView>{rawCode}</CodeView>
+
+            <ReactFlipElement>
+              {({ setFlipElement }) => (
+                <div
+                  ref={setFlipElement}
+                  style={{
+                    height: this.state.height * 50,
+                    width: '100%',
+                    background: '#00C9C9'
+                  }}
+                />
+              )}
+            </ReactFlipElement>
           </div>
         </ReactFlipContainer>
       </div>

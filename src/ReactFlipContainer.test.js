@@ -7,23 +7,35 @@ import FlipGroup from './FlipGroup';
 
 jest.mock('./FlipGroup');
 
-const ReflessElement = ReactFlipElement({})(props => (
-  <div>
-    Element
-  </div>
-));
+const ReflessElement = () => (
+  <ReactFlipElement options={{}}>
+    {() => (
+      <div>
+        Element
+      </div>
+    )}
+  </ReactFlipElement>
+);
 
-const Element = ReactFlipElement()(props => (
-  <div ref={props.flip.setFlipElement}>
-    Element
-  </div>
-));
+const Element = () => (
+  <ReactFlipElement options={{}}>
+    {({ setFlipElement }) => (
+      <div ref={setFlipElement}>
+        Element
+      </div>
+    )}
+  </ReactFlipElement>
+);
 
-const DeferredElement = ReactFlipElement({ defer: true })(props => (
-  <div ref={props.flip.setFlipElement}>
-    Element
-  </div>
-));
+const DeferredElement = () => (
+  <ReactFlipElement options={{ defer: true }}>
+    {({ setFlipElement }) => (
+      <div ref={setFlipElement}>
+        Element
+      </div>
+    )}
+  </ReactFlipElement>
+);
 
 class Wrapper extends Component {
   constructor(props) {
@@ -66,11 +78,16 @@ describe('ReactFlipContainer', () => {
   });
 
   test('Should allow children to register to flip group', () => {
-    const Element = ReactFlipElement({})(props => (
-      <div ref={props.flip.setFlipElement}>
-        Element
-      </div>
-    ));
+    const Element = () => (
+      <ReactFlipElement
+        options={{}}
+        children={({ setFlipElement }) => (
+          <div ref={setFlipElement}>
+            Element
+          </div>
+        )}
+      />
+    );
 
     const tree = mount(
       <ReactFlipContainer>
@@ -256,31 +273,6 @@ describe('ReactFlipContainer', () => {
     expect(removeMock.mock.calls.length).toBe(1);
   });
 
-  test('Should remove an element the FlipGroup on unmount', () => {
-    const mockOptions = jest.fn();
-    mockOptions.mockImplementation(() => ({}));
-
-    const Element = ReactFlipElement(mockOptions)(props => (
-      <div ref={props.flip.setFlipElement}>
-        Element
-      </div>
-    ));
-
-    const Wrapper = () => (
-      <ReactFlipContainer>
-        <div>
-          <Element props="test" />
-        </div>
-      </ReactFlipContainer>
-    );
-
-    const tree = mount(<Wrapper />);
-
-    expect(
-      typeof FlipGroup.prototype.addElement.mock.calls[0][0].optionCreator
-    ).toBe('function');
-  });
-
   test('Should FLI the non deferred elements first and then update the deferred ones', () => {
     FlipGroup.prototype.invert.mockImplementation(() => true);
 
@@ -349,17 +341,21 @@ describe('ReactFlipContainer', () => {
       () => new Promise(resolve => externalResolve = resolve)
     );
 
-    const DeferredElement = ReactFlipElement({ defer: true })(props => {
-      if (!props.opened && props.flip.status === STATIC) {
-        return null;
-      }
+    const DeferredElement = props => (
+      <ReactFlipElement options={{ defer: true }}>
+        {({ setFlipElement, status }) => {
+          if (!props.opened && status === STATIC) {
+            return null;
+          }
 
-      return (
-        <div ref={props.flip.setFlipElement}>
-          Element
-        </div>
-      );
-    });
+          return (
+            <div ref={setFlipElement}>
+              Element
+            </div>
+          );
+        }}
+      </ReactFlipElement>
+    );
 
     const tree = mount(<Wrapper defer Element={DeferredElement} />);
     tree.instance().toggle();
@@ -382,46 +378,26 @@ describe('ReactFlipContainer', () => {
       () => new Promise(resolve => externalResolve = resolve)
     );
 
-    const DeferredElement = ReactFlipElement({ defer: true })(props => {
-      if (!props.opened && props.flip.status === STATIC) {
-        return null;
-      }
+    const DeferredElement = props => (
+      <ReactFlipElement options={{ defer: true }}>
+        {({ status, setFlipElement }) => {
+          if (!props.opened && status === STATIC) {
+            return null;
+          }
 
-      return (
-        <div ref={props.flip.setFlipElement}>
-          Element
-        </div>
-      );
-    });
+          return (
+            <div ref={setFlipElement}>
+              Element
+            </div>
+          );
+        }}
+      </ReactFlipElement>
+    );
 
     const tree = mount(
       <Wrapper defer initiallyOpened={false} Element={DeferredElement} />
     );
     tree.unmount();
     expect(FlipGroup.prototype.addElement.mock.calls.length).toBe(0);
-  });
-
-  test('Should accept options in their function form and the resulting defer should be a function too', () => {
-    let externalResolve;
-
-    let optionMock = jest.fn();
-    optionMock.mockImplementation(() => ({
-      defer: true
-    }));
-
-    FlipGroup.prototype.addElement.mockImplementation((element, defer) => {
-      expect(defer()).toBe(true);
-    });
-
-    const DeferredElement = ReactFlipElement(optionMock)(props => {
-      return (
-        <div ref={props.flip.setFlipElement}>
-          Element
-        </div>
-      );
-    });
-
-    const tree = mount(<Wrapper defer Element={DeferredElement} />);
-    tree.instance().toggle();
   });
 });

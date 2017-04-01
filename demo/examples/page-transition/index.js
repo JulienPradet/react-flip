@@ -5,9 +5,6 @@ import Link from 'react-router-dom/Link';
 import ReactFlipContainer from '../../../src/ReactFlipContainer';
 import ReactFlipElement from '../../../src/ReactFlipElement';
 import Page from './Page';
-import Code from '../../util/Code';
-import rawCode from './index.js?raw';
-import pageRawCode from './Page.js?raw';
 
 const pages = [
   {
@@ -21,12 +18,6 @@ const pages = [
     path: pathname => pathname + '/b'
   }
 ];
-
-const CodeView = ReactFlipElement()(props => (
-  <div ref={props.flip.setFlipElement}>
-    <Code>{props.children}</Code>
-  </div>
-));
 
 class PageTransition extends Component {
   shouldComponentUpdate(nextProps) {
@@ -55,13 +46,17 @@ class PageTransition extends Component {
                 path={page.path(this.props.match.path)}
                 children={({ match }) => {
                   return (
-                    <Page match={match} color={page.color}>{page.label}</Page>
+                    <ReactFlipElement options={{ defer: true }}>
+                      {flip => (
+                        <Page match={match} color={page.color} flip={flip}>
+                          {page.label}
+                        </Page>
+                      )}
+                    </ReactFlipElement>
                   );
                 }}
               />
             ))}
-            <CodeView>{rawCode}</CodeView>
-            <CodeView>{pageRawCode}</CodeView>
           </div>
         </ReactFlipContainer>
       </div>

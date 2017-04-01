@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactFlipElement from '../../../src/ReactFlipElement';
 import { STATIC, BEFORE_ANIMATION } from '../../../src/ReactFlipContainer';
 
 class Page extends Component {
@@ -62,4 +61,4 @@ class Page extends Component {
   }
 }
 
-export default ReactFlipElement({ defer: true })(Page);
+export default Page;
