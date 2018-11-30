@@ -1,19 +1,19 @@
-import { Children, Component, PropTypes } from 'react';
-import FlipGroup from './FlipGroup';
-import Flip from './Flip';
+import { Children, Component, PropTypes } from "react";
+import FlipGroup from "./FlipGroup";
+import Flip from "./Flip";
 
 const getDeferType = deferred =>
-  deferred === undefined ? '' : deferred ? '(deferred)' : '(normal)';
+  deferred === undefined ? "" : deferred ? "(deferred)" : "(normal)";
 
 const shouldAnimate = props =>
-  typeof props.shouldAnimate === 'undefined' ||
-  (typeof props.shouldAnimate === 'function'
+  typeof props.shouldAnimate === "undefined" ||
+  (typeof props.shouldAnimate === "function"
     ? props.shouldAnimate(props)
     : props.shouldAnimate);
 
-export const STATIC = 'ReactFlip_static';
-export const BEFORE_ANIMATION = 'ReactFlip_before';
-export const ANIMATION = 'ReactFlip_animation';
+export const STATIC = "ReactFlip_static";
+export const BEFORE_ANIMATION = "ReactFlip_before";
+export const ANIMATION = "ReactFlip_animation";
 
 class ReactFlipContainer extends Component {
   constructor(props) {
@@ -42,7 +42,7 @@ class ReactFlipContainer extends Component {
   registerElement({ element, options }) {
     const flip = new Flip({ element, options, debug: this.props.debug });
 
-    const defer = typeof options === 'function'
+    const defer = typeof options === "function"
       ? () => options().defer
       : options.defer;
 
@@ -113,42 +113,42 @@ class ReactFlipContainer extends Component {
   }
 
   first({ deferred } = {}) {
-    if (process.env.NODE_ENV === 'development' && this.props.debug) {
+    if (process.env.NODE_ENV === "development" && this.props.debug) {
       const type = getDeferType(deferred);
       console.groupCollapsed(`ReactFlip: First ${type}`);
     }
     this.flip.first({ deferred });
-    if (process.env.NODE_ENV === 'development' && this.props.debug) {
+    if (process.env.NODE_ENV === "development" && this.props.debug) {
       console.groupEnd();
     }
   }
 
   last({ deferred } = {}) {
-    if (process.env.NODE_ENV === 'development' && this.props.debug) {
+    if (process.env.NODE_ENV === "development" && this.props.debug) {
       const type = getDeferType(deferred);
       console.groupCollapsed(`ReactFlip: Last ${type}`);
     }
     this.flip.last({ deferred });
-    if (process.env.NODE_ENV === 'development' && this.props.debug) {
+    if (process.env.NODE_ENV === "development" && this.props.debug) {
       console.groupEnd();
     }
   }
 
   invert({ deferred } = {}) {
-    if (process.env.NODE_ENV === 'development' && this.props.debug) {
+    if (process.env.NODE_ENV === "development" && this.props.debug) {
       const type = getDeferType(deferred);
       console.groupCollapsed(`ReactFlip: Invert ${type}`);
     }
     const result = this.flip.invert({ deferred });
-    if (process.env.NODE_ENV === 'development' && this.props.debug) {
+    if (process.env.NODE_ENV === "development" && this.props.debug) {
       console.groupEnd();
     }
     return result;
   }
 
   play() {
-    if (process.env.NODE_ENV === 'development' && this.props.debug) {
-      console.groupCollapsed('ReactFlip: Play');
+    if (process.env.NODE_ENV === "development" && this.props.debug) {
+      console.groupCollapsed("ReactFlip: Play");
     }
     const playPromise = this.flip.play();
 
@@ -156,14 +156,14 @@ class ReactFlipContainer extends Component {
       this.onAnimationStart()
         .then(() => playPromise)
         .then(() => {
-          if (process.env.NODE_ENV === 'development' && this.props.debug) {
+          if (process.env.NODE_ENV === "development" && this.props.debug) {
             console.groupEnd();
           }
         })
         .then(() => this.onAnimationEnd());
     } else {
-      if (process.env.NODE_ENV === 'development' && this.props.debug) {
-        console.debug('ReactFlip: Nothing to play');
+      if (process.env.NODE_ENV === "development" && this.props.debug) {
+        console.debug("ReactFlip: Nothing to play");
         console.groupEnd();
       }
     }
@@ -183,14 +183,21 @@ class ReactFlipContainer extends Component {
   }
 
   render() {
-    return Children.only(this.props.children);
+    if (typeof this.props.children === "function") {
+      return this.props.children({
+        animating: this.state.animating,
+        status: this.state.status
+      });
+    } else {
+      return Children.only(this.props.children);
+    }
   }
 }
 
 ReactFlipContainer.propTypes = {
   defer: PropTypes.bool,
-  forceDefer: PropTypes.bool,
-  children: PropTypes.node.isRequired
+  forceDefer: PropTypes.bool
+  // children: PropTypes.oneOf([PropTypes.node, PropTypes.func]).isRequired
 };
 
 ReactFlipContainer.defaultProps = {

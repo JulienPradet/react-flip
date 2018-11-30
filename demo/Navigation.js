@@ -1,14 +1,14 @@
-import React from 'react';
-import classnames from 'classnames';
-import { Route, Link } from 'react-router-dom';
+import React from "react";
+import classnames from "classnames";
+import { Route, Link } from "react-router-dom";
 
 const NavigationLink = props => (
   <Route
     path={props.to}
     children={({ match }) => (
       <li
-        className={classnames('nav-link', {
-          'nav-link--active': Boolean(match)
+        className={classnames("nav-link", {
+          "nav-link--active": Boolean(match)
         })}
       >
         <Link to={props.to}>{props.children}</Link>
@@ -29,6 +29,9 @@ const Navigation = () => (
       <NavigationLink to="/page-transition">Page Transition</NavigationLink>
       <NavigationLink to="/complex-transition">
         Complex Transition
+      </NavigationLink>
+      <NavigationLink to="/page-list">
+        Page List Transition
       </NavigationLink>
     </ul>
   </nav>

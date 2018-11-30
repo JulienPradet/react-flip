@@ -1,4 +1,4 @@
-import getElementStyle from './getElementStyle';
+import getElementStyle from "./getElementStyle";
 
 const defaultOptions = {
   duration: 300,
@@ -6,7 +6,7 @@ const defaultOptions = {
   updateScale: true,
   updateOpacity: true,
   delay: 0,
-  durationMultiplier: 1,
+  durationMultiplier: 10,
   getElementStyle: getElementStyle,
   timing: time =>
     Math.pow(time, 2) / (Math.pow(time, 2) + Math.pow(1 - time, 2))
@@ -23,36 +23,36 @@ class Flip {
   }
 
   updateOptions() {
-    if (typeof this.optionCreator === 'function') {
+    if (typeof this.optionCreator === "function") {
       this.options = Object.assign({}, defaultOptions, this.optionCreator());
     } else {
       this.options = Object.assign({}, defaultOptions, this.optionCreator);
     }
-    if (process.env.NODE_ENV === 'development' && this.debug) {
-      console.debug('Options updated', this.options.id, this.options);
+    if (process.env.NODE_ENV === "development" && this.debug) {
+      console.debug("Options updated", this.options.id, this.options);
     }
   }
 
   first() {
     this._first = this.options.getElementStyle(this.element);
-    if (process.env.NODE_ENV === 'development' && this.debug) {
+    if (process.env.NODE_ENV === "development" && this.debug) {
       console.debug(this.options.id, this._first);
     }
   }
 
   last() {
     this._last = this.options.getElementStyle(this.element);
-    if (process.env.NODE_ENV === 'development' && this.debug) {
+    if (process.env.NODE_ENV === "development" && this.debug) {
       console.debug(this.options.id, this._last);
     }
   }
 
   invert() {
     if (!this._first || !this._last) {
-      if (process.env.NODE_ENV === 'development' && this.debug) {
+      if (process.env.NODE_ENV === "development" && this.debug) {
         console.warn(
           this.options.id,
-          'Make sure to call `flip.first()` and `flip.last()` before calling `flip.invert()`'
+          "Make sure to call `flip.first()` and `flip.last()` before calling `flip.invert()`"
         );
       }
       return;
@@ -63,19 +63,56 @@ class Flip {
     this._invert = {
       translateX: 0,
       translateY: 0,
-      scaleX: 1,
-      scaleY: 1,
+      scaleX: 0,
+      scaleY: 0,
       opacity: 0
     };
 
     if (this.options.updateTranslate) {
-      this._invert.translateX = this._first.left - this._last.left;
-      this._invert.translateY = this._first.top - this._last.top;
+      this._invert.translateX =
+        this._first.left - this._last.left - this._last.translateX;
+      this._invert.translateY =
+        this._first.top - this._last.top - this._last.translateY;
     }
     if (this.options.updateScale) {
-      this._invert.scaleX = this._first.width / this._last.width;
-      this._invert.scaleY = this._first.height / this._last.height;
+      if (
+        this._first.width / this._first.scaleX ===
+        this._last.width / this._last.scaleX
+      ) {
+        this._invert.scaleX = this._first.scaleX - this._last.scaleX;
+      } else {
+        this._invert.scaleX =
+          -this._first.width / this._last.width + this._last.scaleX;
+      }
+
+      if (
+        this._first.height / this._first.scaleY ===
+        this._last.height / this._last.scaleY
+      ) {
+        this._invert.scaleY = this._first.scaleY - this._last.scaleY;
+      } else {
+        this._invert.scaleY =
+          -this._first.height / this._last.height + this._last.scaleY;
+      }
     }
+    console.log("HERE", {
+      first: {
+        height: this._first.height,
+        width: this._first.width,
+        scaleY: this._first.scaleY,
+        scaleX: this._first.scaleX
+      },
+      last: {
+        height: this._last.height,
+        width: this._last.width,
+        scaleY: this._last.scaleY,
+        scaleX: this._last.scaleX
+      },
+      invert: {
+        scaleX: this._invert.scaleX,
+        scaleY: this._invert.scaleY
+      }
+    });
     if (this.options.updateOpacity) {
       this._invert.opacity = this._first.opacity - this._last.opacity;
     }
@@ -87,8 +124,8 @@ class Flip {
       this._invert.scaleY === 1 &&
       this._invert.opacity === 0
     ) {
-      if (process.env.NODE_ENV === 'development' && this.debug) {
-        console.warn(this.options.id, 'Nothing to animate', this.element);
+      if (process.env.NODE_ENV === "development" && this.debug) {
+        console.warn(this.options.id, "Nothing to animate", this.element);
       }
       this.resetStyle();
       return;
@@ -96,26 +133,27 @@ class Flip {
 
     this.updateStyle(0);
     this.element.style.zIndex = Math.max(this._first.zIndex, this._last.zIndex);
-    this.element.style.transformOrigin = '0 0';
-    this.element.style.willChange = 'transform, opacity';
-    if (process.env.NODE_ENV === 'development' && this.debug) {
-      console.debug(this.options.id, 'Ready to animate');
+    this.element.style.transformOrigin = "0 0";
+    this.element.style.willChange = "transform, opacity";
+    if (process.env.NODE_ENV === "development" && this.debug) {
+      console.debug(this.options.id, "Ready to animate", this._invert);
     }
     return true;
   }
 
   play(startTime) {
     if (!this._invert) {
-      if (process.env.NODE_ENV === 'development' && this.debug) {
+      if (process.env.NODE_ENV === "development" && this.debug) {
         console.warn(
           this.options.id,
-          'Make sure to call `flip.invert()` before calling `flip.play()`'
+          "Make sure to call `flip.invert()` before calling `flip.play()`"
         );
       }
       return;
     }
 
-    this._start = window.performance.now() +
+    this._start =
+      window.performance.now() +
       this.options.delay * this.options.durationMultiplier;
 
     const promise = new Promise((resolve, reject) => {
@@ -123,8 +161,8 @@ class Flip {
       this.reject = reject;
     });
 
-    if (process.env.NODE_ENV === 'development' && this.debug) {
-      console.debug(this.options.id, 'Starting animation at', this._start);
+    if (process.env.NODE_ENV === "development" && this.debug) {
+      console.debug(this.options.id, "Starting animation at", this._start);
     }
     window.requestAnimationFrame(this.animate);
 
@@ -133,7 +171,8 @@ class Flip {
 
   animate() {
     const end = window.performance.now();
-    let time = (end - this._start) /
+    let time =
+      (end - this._start) /
       (this.options.duration * this.options.durationMultiplier);
     time = Math.min(1, Math.max(0, time));
 
@@ -142,12 +181,12 @@ class Flip {
     if (time < 1) {
       window.requestAnimationFrame(this.animate);
     } else {
-      if (process.env.NODE_ENV === 'development' && this.debug) {
-        console.debug(this.options.id, 'Ending animation at', end);
-        console.debug(this.options.id, 'Total duration:', end - this._start);
+      if (process.env.NODE_ENV === "development" && this.debug) {
+        console.debug(this.options.id, "Ending animation at", end);
+        console.debug(this.options.id, "Total duration:", end - this._start);
         console.debug(
           this.options.id,
-          'Actual duration:',
+          "Actual duration:",
           this.options.duration * this.options.durationMultiplier
         );
       }
@@ -157,10 +196,10 @@ class Flip {
 
   updateStyle(time) {
     const transform = {
-      translateX: this._invert.translateX * (1 - time),
-      translateY: this._invert.translateY * (1 - time),
-      scaleX: this._invert.scaleX + (1 - this._invert.scaleX) * time,
-      scaleY: this._invert.scaleY + (1 - this._invert.scaleY) * time,
+      translateX: this._last.translateX + this._invert.translateX * (1 - time),
+      translateY: this._last.translateY + this._invert.translateY * (1 - time),
+      scaleX: this._last.scaleX + this._invert.scaleX * (1 - time),
+      scaleY: this._last.scaleY + this._invert.scaleY * (1 - time),
       opacity: this._last.opacity + this._invert.opacity * (1 - time)
     };
     this.element.style.transform = `
